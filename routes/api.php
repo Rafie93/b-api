@@ -93,6 +93,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('stock/detail/{id}', 'Api\Stock\StockController@detail');
     Route::get('stock/stock_gudang', 'Api\Stock\StockController@stockGudang');
 
+    /* Sales Route */
+    Route::get('sales/list', 'Api\Sales\SalesController@index');
+
+    //end api
+
 
 
 });
