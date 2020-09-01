@@ -1,0 +1,158 @@
+html {
+    margin: 10px 13px 0 13px;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    font-size:10px;
+}
+
+table.main-table {
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.labels-table {
+    font-size:12px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.labels-table td {
+    border-spacing: 2px;
+    padding: 0px 5px;
+    border: 1px solid #666;
+}
+
+table.labels-table th {
+    border: 1px solid #666;
+    padding: 5px 0;
+}
+
+table.mini-receipt-table {
+    font-size:11px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.mini-receipt-table td {
+    padding: 2px 3px;
+}
+
+table.mini-receipt-table th {
+    padding: 2px 0;
+}
+
+table.header-table {
+    font-size:12px;
+    width: 750px;
+    border-collapse: collapse;
+}
+
+table.header-table th {
+    padding: 2px 0px;
+}
+
+
+
+h1, h2, h3, h4 {
+    margin: 0;
+}
+
+.text-center {
+    text-align: center;
+    vertical-align:middle;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+table .text-top {
+    vertical-align: top;
+}
+
+table .text-middle {
+    vertical-align: middle;
+}
+
+table .text-bottom {
+    vertical-align: bottom;
+}
+
+.bam-print-logo {
+    width: 70px;
+}
+
+table {
+    border-spacing: 1px;
+}
+
+td, th {
+    padding: 0;
+
+}
+
+td {
+    vertical-align: top;
+}
+
+p {
+    margin: 0 0 3px 0;
+}
+
+div {
+    margin: 0;
+    padding: 0;
+}
+
+.lead {
+    font-size: 12px;
+}
+
+.strong { font-weight: bold; }
+
+.border-bottom {
+    border-bottom: 1px solid #000;
+    clear: both;
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+table.receipt-table, table.receipt-table table {
+    /*width: 100%;*/
+    border-collapse: collapse;
+    font-size: 9px;
+}
+
+table.receipt-table th {
+    background-color: #ccc;
+    font-size: 10px;
+}
+
+
+table.receipt-table th, table.receipt-table td {
+    height: 12px;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+
+}
+
+table.full-bordered th, table.full-bordered td {
+    border: 1px solid #aaa;
+    padding: 3px;
+}
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
