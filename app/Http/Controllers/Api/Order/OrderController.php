@@ -167,6 +167,17 @@ class OrderController extends Controller
                     $notes = $value["notes"];
                     $unit = $value["unit"];
                     $quantity = $value["quantity"];
+                    if($type==1){
+                        $stock = $value["stock_gudang"];
+                        if($quantity>$stock){
+                            DB::rollBack();
+                            return response()->json([
+                                'success'=>false,
+                                'message'=>"Jumlah Order Not Valid"
+                            ], 400);
+                        }
+
+                    }
 
                     $detail = new \App\Models\Orders\OrderDetail;
                     $detail->order_product_id = $orderId;
@@ -282,7 +293,7 @@ class OrderController extends Controller
 
     public function updateByWarehouse(Request $request,$id)
     {
-        $code_gudang = $request->code_gudang=="" ? generateCode("GD") : $request->code_gudang;
+        $code_gudang = $request->code_gudang=="" ? generateCode("DO") : $request->code_gudang;
         $dateProses = date('Y-m-d H:i:s');
         $pengiriman = false;
         $request->merge([
@@ -306,7 +317,17 @@ class OrderController extends Controller
                      $product_id = $value["product_id"];
                      $jumlah_kirim = $value["jumlah_kirim"]!=null ?  $value["jumlah_kirim"] : 0 ;
                      $note_gudang = $value["note_gudang"];
+                     $stock_gudang = $value["stock_gudang"];
                      $unit = $value["unit"];
+
+                     if($jumlah_kirim>$stock_gudang){
+                        DB::rollBack();
+                        return response()->json([
+                            'success'=>false,
+                            'message'=>"Stock Gudang Tidak Cukup"
+                        ], 400);
+                     }
+
 
                      $orderDetail = OrderDetail::where('order_product_id',$id)
                                                 ->where('product_id',$product_id)
@@ -331,7 +352,6 @@ class OrderController extends Controller
 
          } catch (\PDOException $e) {
              DB::rollBack();
-
              return response()->json([
                  'success'=>false,
                  'message'=>$e

@@ -23,12 +23,17 @@ class ProductQuery
                         $join->on('product.id', '=', 'product_stock.product_id')
                              ->where('product_stock.source', '=', '1');
                      })
+                     ->leftJoin('product_stock as stock_gudang', function($join){
+                        $join->on('product.id', '=', 'stock_gudang.product_id')
+                             ->where('stock_gudang.source', '=', '2');
+                     })
                     ->leftJoin('category', 'product.category_id', '=', 'category.id')
                     ->select('product.id','product.sku','product.barcode','product.name',
                             'product.alert_quantity','category.name as category',
                             'product.brand','product.price','product.price_modal',
                             'product.thumbnail',
-                            DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock')
+                                DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock'),
+                                DB::raw('(CASE WHEN stock_gudang.stock IS NULL THEN 0 ELSE stock_gudang.stock END) AS stock_gudang')
                             )
                             ->where('product.is_active',1)
                     ->orderBy('product_stock.stock','asc')
