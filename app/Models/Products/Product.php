@@ -8,7 +8,7 @@ class Product extends Model
 {
     protected $table = "product";
     protected $fillable = ["sku","barcode_type","barcode","category_id","name","description","brand","price_modal","price",
-    "thumbnail","image","alert_quantity","alert_quantity_warehouse","tax_id","is_tax_method","is_active","is_show_in_menu","creator_id"];
+    "thumbnail","image","alert_quantity","alert_quantity_warehouse","tax_id","is_tax_method","is_active","is_show_in_menu","creator_id","product_type"];
 
     public function thumbnail()
     {
@@ -17,6 +17,10 @@ class Product extends Model
     public function isAktif()
     {
        return $this->is_active==1 ? "Aktif" : "Non Aktif";
+    }
+    public function isProductType()
+    {
+       return $this->product_type==2 ? "Paket" : "Normal";
     }
 
     public function category()

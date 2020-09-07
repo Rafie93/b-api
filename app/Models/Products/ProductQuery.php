@@ -3,12 +3,16 @@
 namespace App\Models\Products;
 use App\Models\Products\Product;
 use App\Models\Products\ProductStockHistory;
+use App\Models\Products\ProductStockExpired;
 use App\Models\Products\Brand;
 use App\Models\Products\Unit;
 use App\Models\Products\Category;
 use App\Models\Products\ProductVariant;
 use App\Models\Products\ProductStock;
 use Illuminate\Support\Facades\DB;
+use App\Models\Sales\SaleDetail;
+use App\Models\Orders\OrderDetail;
+use App\Models\Products\SupplierProduct;
 
 class ProductQuery
 {
@@ -35,11 +39,20 @@ class ProductQuery
                                 DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock'),
                                 DB::raw('(CASE WHEN stock_gudang.stock IS NULL THEN 0 ELSE stock_gudang.stock END) AS stock_gudang')
                             )
-                            ->where('product.is_active',1)
-                    ->orderBy('product_stock.stock','asc')
-                    ->get();
+                            ->where('product.is_active',1);
+
+        if($request->product_sorting==1){
+            $products = $products->orderBy('product.name','asc')
+                                 ->get();
+        }else{
+            $products = $products->where('product.product_type',1)
+                                 ->orderBy('product_stock.stock','asc')
+                                 ->get();
+        }
         return $products;
     }
+
+
     public function product_stok_gudang_get($request)
     {
         $products = DB::table('product')
@@ -55,6 +68,7 @@ class ProductQuery
                             DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock')
                             )
                      ->where('product.is_active',1)
+                     ->where('product.product_type',1)
                     ->orderBy('product_stock.stock','asc')
                     ->get();
         return $products;
@@ -62,6 +76,22 @@ class ProductQuery
     public function product_getById($id)
     {
         return Product::where('id',$id)->get();
+    }
+    public function product_delete($id)
+    {
+        $sale = SaleDetail::where('product_id',$id)->get()->count();
+        $order = OrderDetail::where('product_id',$id)->get()->count();
+        if(($sale > 0) || ($order > 0)){
+            return true;
+        }else{
+            $products = Product::find($id);
+            $products->delete();
+            ProductStock::where('product_id',$id)->delete();
+            ProductStockHistory::where('product_id',$id)->delete();
+            ProductStockExpired::where('product_id',$id)->delete();
+            SupplierProduct::where('product_id',$id)->delete();
+            return false;
+        }
     }
 
     public function product_store($request,$userId)
@@ -79,38 +109,67 @@ class ProductQuery
                                 'barcode_type'=>'128', 'creator_id' => $userId
                             ]);
 
-            $product = Product::create($request->all());
-            $foto = $request->file('file');
-            $fileName = $foto->getClientOriginalName();
-            $request->file('file')->move('images/product/'.$product->id,$fileName);
-            $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
-            if($request->stock!=0 || $request->stock!=""){
-                ProductStock::create([
-                    'product_id' => $product->id,
-                    'stock' => $request->stock,
-                    'unit'=> $request->purchase_unit,
-                    'source'=>2
-                ]);
+            try{
+                DB::beginTransaction();
+                $product = Product::create($request->all());
+                $foto = $request->file('file');
+                $fileName = $foto->getClientOriginalName();
+                $request->file('file')->move('images/product/'.$product->id,$fileName);
+                $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
+                if($request->stock!=0 || $request->stock!=""){
+                    ProductStock::create([
+                        'product_id' => $product->id,
+                        'stock' => $requestData->stock,
+                        'unit'=> $requestData->purchase_unit,
+                        'source'=>2
+                    ]);
+                }
+                $suppliers = $requestData->supplier;
+                foreach($suppliers as $s){
+                    $supplier_id = $s["supplier_id"];
+                    SupplierProduct::create([
+                        'supplier_id'=>$supplier_id,
+                        'product_id' => $product->id
+                    ]);
+                }
+                DB::commit();
+            }catch (\PDOException $e) {
+                DB::rollBack();
             }
        }else{
-        $request->merge(['sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $userId]);
-        $product = Product::create($request->all());
-        if($request->stock!=0 || $request->stock!=""){
-            ProductStock::insert([
-                'product_id' => $product->id,
-                'stock' => $request->stock,
-                'unit'=> $request->purchase_unit,
-                'source'=>2
-            ]);
-            ProductStockHistory::insert([
-                'date' => date('Y-m-d H:i:s'),
-                'product_id'=>$product->id,
-                'unit'  => $request->purchase_unit,
-                'quantity' => $request->stock,
-                'source' => 2,
-                'ref_code' => "STOCK_AWAL",
-            ]);
-        }
+            $request->merge(['sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $userId]);
+            try{
+                DB::beginTransaction();
+                    $product = Product::create($request->all());
+                    if($request->stock!=0 || $request->stock!=""){
+                        ProductStock::insert([
+                            'product_id' => $product->id,
+                            'stock' => $request->stock,
+                            'unit'=> $request->purchase_unit,
+                            'source'=>2
+                        ]);
+                        ProductStockHistory::insert([
+                            'date' => date('Y-m-d H:i:s'),
+                            'product_id'=>$product->id,
+                            'unit'  => $request->purchase_unit,
+                            'quantity' => $request->stock,
+                            'source' => 2,
+                            'ref_code' => "STOCK_AWAL",
+                        ]);
+                    }
+                    $suppliers = $request->supplier;
+                    foreach($suppliers as $s){
+                        $supplier_id = $s["supplier_id"];
+                        SupplierProduct::create([
+                            'supplier_id'=>$supplier_id,
+                            'product_id' => $product->id
+                        ]);
+                    }
+                DB::commit();
+            }catch (\PDOException $e) {
+                DB::rollBack();
+            }
+
        }
        return $product;
     }
@@ -129,16 +188,48 @@ class ProductQuery
             $request->merge(['sku'=>$requestData->sku=="" ? $this->auto_sku($requestData->brand) : $requestData->sku,
                                 'barcode_type'=>'128','creator_id' => $userId
                             ]);
-            $product = Product::where('id',$id);
-            $product->update($request->all());
-            $foto = $request->file('file');
-            $fileName = $foto->getClientOriginalName();
-            $request->file('file')->move('images/product/'.$product->id,$fileName);
-            $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
+            try{
+                DB::beginTransaction();
+                    $product = Product::find($id);
+                    $product->update($request->all());
+                    $foto = $request->file('file');
+                    $fileName = $foto->getClientOriginalName();
+                    $request->file('file')->move('images/product/'.$product->id,$fileName);
+                    $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
+
+                    $suppliers = $requestData->supplier;
+                    $sp = SupplierProduct::where('product_id',$id)->delete();
+                    foreach($suppliers as $s){
+                        $supplier_id = $s["supplier_id"];
+                        SupplierProduct::create([
+                            'supplier_id'=>$supplier_id,
+                            'product_id' => $product->id
+                        ]);
+                    }
+                DB::commit();
+            }catch (\PDOException $e) {
+                DB::rollBack();
+            }
        }else{
             $request->merge(['sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $userId]);
-            $product = Product::where('id',$id);
-            $product->update($request->all());
+            try{
+                DB::beginTransaction();
+                    $product = Product::find($id);
+                    $product->update($request->all());
+
+                    $suppliers = $request->supplier;
+                    $sp = SupplierProduct::where('product_id',$id)->delete();
+                    foreach($suppliers as $s){
+                        $supplier_id = $s["supplier_id"];
+                        SupplierProduct::create([
+                            'supplier_id'=>$supplier_id,
+                            'product_id' => $product->id
+                        ]);
+                    }
+                DB::commit();
+            }catch (\PDOException $e) {
+                DB::rollBack();
+            }
        }
        return $product;
     }

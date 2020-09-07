@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Products\Category;
 use App\Http\Resources\Products\CategoryList as CategoryResource;
+use App\Models\Products\Product;
 
 class CategoryController extends Controller
 {
@@ -70,19 +71,19 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        $category = Category::find($id);
-        $isDelete = $category->isDelete();
-        if($isDelete){
-            $category->delete();
+        $product = Product::where('category_id',$id)->get()->count();
+        if($product > 0){
+            return response()->json([
+                'success'=>false,
+                'message'=> "Kategori tidak bisa dihapus, karena sedang dipakai"
+            ], 400);
+        }else{
+            $category = Category::find($id);
+            $isDelete = $category->isDelete();
             return response()->json([
                 'success'=>true,
                 'message'=> "Data berhasil dihapus"
             ], 200);
-        }else{
-            return response()->json([
-                'success'=>false,
-                'message'=> "Data tidak bisa dihapus, karena sedang dipakai"
-            ], 400);
         }
     }
 }

@@ -24,6 +24,7 @@ class ListProductController extends Controller
             ->leftJoin('product', 'product.id', '=', 'order_product_detail.product_id')
             ->where('order_product_detail.status',1)
             ->where('order_product.type',1)
+            ->where('product.product_type',1)
             ->orderBy('order_product_detail.product_id','asc')
             ->get();
 
@@ -46,6 +47,7 @@ class ListProductController extends Controller
             ->leftJoin('order_product', 'order_product.id', '=', 'order_product_detail.order_product_id')
             ->where('order_product_detail.status',1)
             ->where('order_product.type',1)
+            ->where('product.product_type',1)
             ->orderBy('order_product_detail.product_id','asc')
             ->get();
 
@@ -69,6 +71,7 @@ class ListProductController extends Controller
             ->leftJoin('product', 'product.id', '=', 'order_product_detail.product_id')
             ->where('order_product_detail.status',1)
             ->where('order_product.type',2)
+            ->where('product.product_type',1)
             ->orderBy('order_product_detail.product_id','asc')
             ->get();
 

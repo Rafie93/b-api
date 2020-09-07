@@ -9,7 +9,7 @@ class Order extends Model
     protected $table = "order_product";
     protected $fillable = ["code","type","date","note","status","creator_id",
     "receiver_id","arrival_date","approved_order_date","approved_order_id",
-    "approved_date","approved_id","proses_date","code_gudang","send_id","send_date"];
+    "approved_date","approved_id","proses_date","code_gudang","send_id","send_date","arrival_id"];
 
     public function status()
     {
@@ -29,6 +29,9 @@ class Order extends Model
             return "Pesanan Sedang Dikirim";
         }else if($status==6){
             return "Pesanan Sudah Datang";
+        }
+        else if($status==7){
+            return "Datang dengan Tidak Lengkap";
         }else{
             return "Draft";
         }
@@ -41,12 +44,21 @@ class Order extends Model
 
     public function penanggung_jawab()
     {
-        $userId = $this->creator_id;
-        $penanggungId =  User::find($userId)->first()->penanggung_id;
-        if($penanggungId == null){
+        $userId = $this->approved_order_id;
+        if($userId!=null){
             return User::where('id',$userId)->first()->name;
         }else{
-            return User::where('id',$penanggungId)->first()->name;
+            return "-";
+        }
+    }
+
+    public function penerima()
+    {
+        $userId = $this->receiver_id;
+        if($userId!=null){
+            return User::where('id',$userId)->first()->name;
+        }else{
+            return "-";
         }
     }
 
@@ -63,6 +75,24 @@ class Order extends Model
     public function approved_order()
     {
         $userId = $this->approved_order_id;
+        if($userId!=null){
+            return User::where('id',$userId)->first()->name;
+        }else{
+            return "-";
+        }
+    }
+    public function arrival()
+    {
+        $userId = $this->arrival_id;
+        if($userId!=null){
+            return User::where('id',$userId)->first()->name;
+        }else{
+            return "-";
+        }
+    }
+    public function pengirim()
+    {
+        $userId = $this->send_id;
         if($userId!=null){
             return User::where('id',$userId)->first()->name;
         }else{

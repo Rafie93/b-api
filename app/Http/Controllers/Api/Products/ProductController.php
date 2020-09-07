@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use JWTAuth;
 use App\Models\Products\ProductQuery;
 use App\Http\Resources\Products\ProductList as ProductResource;
+use App\Http\Resources\Supplier\SupplierProductList as SupplierResource;
 
+use App\Models\Products\SupplierProduct;
 class ProductController extends Controller
 {
     public $user;
@@ -24,6 +26,7 @@ class ProductController extends Controller
             'product' =>   new ProductResource($products)
            ],200);
     }
+
     public function list_stok_store(Request $request)
     {
         $products = $this->queryObject->product_stok_store_get($request);
@@ -32,6 +35,7 @@ class ProductController extends Controller
             'product' =>   $products
            ],200);
     }
+
     public function list_stok_gudang(Request $request)
     {
         $products = $this->queryObject->product_stok_gudang_get($request);
@@ -43,7 +47,17 @@ class ProductController extends Controller
     public function edit(Request $request,$id)
     {
         $products = $this->queryObject->product_getById($id);
-        return response()->json($products->first(),200);
+        return response()->json(
+            $products->first(),200);
+    }
+
+    public function getSupplierByProduct($id)
+    {
+        $supplierProduct = SupplierProduct::where('product_id',$id)->get();
+        return response()->json([
+            'success' => true,
+            'supplier'=>new SupplierResource($supplierProduct)
+        ],200);
     }
 
     public function store(Request $request)
@@ -62,6 +76,22 @@ class ProductController extends Controller
             'success' => true,
             'product' =>   $products
            ],200);
+    }
+
+    public function delete($id)
+    {
+        $cek = $this->queryObject->product_delete($id);
+        if($cek){
+            return response()->json([
+                'success' => false,
+                'message' => "Produk Tidak Bisa di hapus karena digunakan"
+               ],400);
+        }else{
+            return response()->json([
+                'success' => true,
+                'message' =>  "Produk Berhasil dihapus"
+               ],200);
+        }
     }
 
 }

@@ -26,6 +26,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('category/list_kategori/{id}', 'Api\Products\CategoryController@list_kategori');
     Route::post('category/store', 'Api\Products\CategoryController@store');
     Route::post('category/update/{id}', 'Api\Products\CategoryController@update');
+    Route::post('category/delete/{id}', 'Api\Products\CategoryController@delete');
 
     /**
      * Endpoint Route Brand dan unit */
@@ -40,8 +41,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('product/list', 'Api\Products\ProductController@list');
     Route::get('product/stock_store', 'Api\Products\ProductController@list_stok_store');
     Route::get('product/stock_gudang', 'Api\Products\ProductController@list_stok_gudang');
-
+    Route::get('product/supplier_by_product/{id}', 'Api\Products\ProductController@getSupplierByProduct');
     Route::get('product/edit/{id}', 'Api\Products\ProductController@edit');
+    Route::post('product/delete/{id}', 'Api\Products\ProductController@delete');
     Route::post('product/store', 'Api\Products\ProductController@store');
     Route::post('product/update/{id}', 'Api\Products\ProductController@update');
 
@@ -54,11 +56,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('order/produkGudang', 'Api\Order\ListProductController@pesananGudang');
     Route::get('order/produkStoreGudang', 'Api\Order\ListProductController@pesananStoreGudang');
 
-
     Route::get('order/detail/{id}', 'Api\Order\OrderController@detail');
     Route::post('order/store', 'Api\Order\OrderController@store');
+    Route::post('order/update/{id}', 'Api\Order\OrderController@update');
     Route::get('order/requestStore', 'Api\Order\OrderController@requestStore');
 
+    Route::post('order/updateByKeuangan/{id}','Api\Order\OrderController@updateByKeuangan');
     Route::post('order/updateByWarehouse/{id}','Api\Order\OrderController@updateByWarehouse');
     Route::post('order/approveByPengiriman/{id}','Api\Order\OrderController@approvePengiriman');
     Route::post('order/approveOrderStore/{id}','Api\Order\OrderController@approveOrderStore');
@@ -81,6 +84,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('supplier/store','Api\Supplier\SupplierController@store');
     Route::post('supplier/update/{id}','Api\Supplier\SupplierController@update');
     Route::post('supplier/delete/{id}','Api\Supplier\SupplierController@delete');
+    Route::get('supplier/detail/{id}','Api\Supplier\SupplierController@detail');
 
     /* Endpoint Route User */
     Route::get('users/list', 'Api\Sistem\UserController@index');
@@ -95,6 +99,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     /* Sales Route */
     Route::get('sales/list', 'Api\Sales\SalesController@index');
+    Route::post('sales/store', 'Api\Sales\SalesController@store');
 
     //end api
 

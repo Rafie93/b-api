@@ -244,9 +244,16 @@
                 </tr>
 
                 <tr>
-                    <td  align="center">{{$order->creator()}}</td>
-                    <td  align="center">{{$order->approved_order()}}</td>
-                    <td  align="center">{{$order->penanggung_jawab()}}</td>
+                    @if ($type=="order")
+                        <td  align="center">{{$order->creator()}}</td>
+                        <td  align="center">{{$order->penerima()}}</td>
+                        <td  align="center">{{$order->approved_order()}}</td>
+                    @elseif($type=="pengiriman")
+                        <td  align="center">{{$order->pengirim()}}</td>
+                        <td  align="center">{{$order->arrival()}}</td>
+                        <td  align="center">{{$order->approved()}}</td>
+                    @endif
+
                 </tr>
             </tbody>
         </table>

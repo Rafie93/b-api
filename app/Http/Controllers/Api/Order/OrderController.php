@@ -131,7 +131,9 @@ class OrderController extends Controller
                 'quantity_received' => $d->quantity_received,
                 'unit'  => $d->unit,
                 'notes' => $d->notes,
-                'note_gudang' => $d->note_gudangm
+                'note_gudang' => $d->note_gudang,
+                'status_barang' => $d->status,
+                'status_barang_display' => $d->isStatus()
             );
         }
         $order = Order::where('id',$orderId)->first();
@@ -147,6 +149,7 @@ class OrderController extends Controller
             'status'=> $order->status,
             'status_display' => $order->status(),
             'penanggung_jawab' => $order->penanggung_jawab(),
+            'pemohon'   => $order->creator(),
             'detail' =>  $det
            ],200);
     }
@@ -167,7 +170,7 @@ class OrderController extends Controller
                     $notes = $value["notes"];
                     $unit = $value["unit"];
                     $quantity = $value["quantity"];
-                    if($type==1){
+                    if($request->type==1){
                         $stock = $value["stock_gudang"];
                         if($quantity>$stock){
                             DB::rollBack();
@@ -207,6 +210,66 @@ class OrderController extends Controller
         }
     }
 
+    public function update(Request $request,$id)
+    {
+        $order = Order::find($id);
+        $status = $order->status;
+        if($status==1){
+            try
+            {
+                 DB::beginTransaction();
+                     $orderId = $id;
+                     OrderDetail::where('order_product_id',$id)->delete();
+                     foreach ($request->products as $key => $value) {
+                         $product_id = $value["product_id"];
+                         $notes = $value["notes"];
+                         $unit = $value["unit"];
+                         $quantity = $value["quantity"];
+                         if($request->type==1){
+                             $stock = $value["stock_gudang"];
+                             if($quantity>$stock){
+                                 DB::rollBack();
+                                 return response()->json([
+                                     'success'=>false,
+                                     'message'=>"Jumlah Order Not Valid"
+                                 ], 400);
+                             }
+                         }
+
+                         $detail = new \App\Models\Orders\OrderDetail;
+                         $detail->order_product_id = $orderId;
+                         $detail->product_id = $product_id;
+                         $detail->unit = $unit;
+                         $detail->notes = $notes;
+                         $detail->quantity_send = $quantity;
+                         $detail->quantity_order = $quantity;
+                         $detail->save();
+                     }
+
+                 DB::commit();
+                 return response()->json([
+                     'success'=>true,
+                     'message'=> "Pesanan Berhasil diubah",
+                     'order_id' => $id,
+                     'order_code' => $order->code
+                     ], 200);
+
+             } catch (\PDOException $e) {
+                 DB::rollBack();
+
+                 return response()->json([
+                     'success'=>false,
+                     'message'=>$e
+                 ], 400);
+             }
+        }else{
+            return response()->json([
+                'success'=>false,
+                'message'=>"Tidak dapat di edit",
+            ], 400);
+        }
+    }
+
     public function confirmArrival(Request $request,$id)
     {
         try
@@ -221,12 +284,20 @@ class OrderController extends Controller
                      $product_id = $value["product_id"];
                      $quantity_received = $value["quantity_received"];
                      $unit = $value["unit"];
+                     $status_barang = $value["status_barang"];
+
+                     if($status_barang==5){
+                        $this->stokIn($product_id,$quantity_received,$unit,1,$order->code);
+                     }else{
+                        $quantity_received = 0;
+                        Order::find($id)->update(['status'=>7]);
+                     }
                      OrderDetail::where('product_id',$product_id)
                             ->where('order_product_id',$id)
                             ->update([
-                                'quantity_received'=> $quantity_received
+                                'quantity_received'=> $quantity_received,
+                                'status' => $status_barang
                             ]);
-                    $this->stokIn($product_id,$quantity_received,$unit,1,$order->code);
                  }
 
              DB::commit();
@@ -291,6 +362,21 @@ class OrderController extends Controller
             ], 200);
     }
 
+    public function updateByKeuangan(Request $request,$id)
+    {
+       $order = Order::find($id);
+       $order->update([
+           'status' => $request->status_update,
+           'proses_date' => date('Y-m-d H:i:s'),
+           'receiver_id' => $this->user->id
+       ]);
+       return response()->json([
+            'success'=>true,
+            'message'=> "Pesanan Di Proses",
+            'order_id' => $id,
+        ], 200);
+    }
+
     public function updateByWarehouse(Request $request,$id)
     {
         $code_gudang = $request->code_gudang=="" ? generateCode("DO") : $request->code_gudang;
@@ -301,7 +387,7 @@ class OrderController extends Controller
             'status'=>$request->status_update]);
         if($request->status_update=="2"){
             $set = 1;
-            $request->merge(['proses_date'=>$dateProses]);
+            $request->merge(['proses_date'=>$dateProses,'receiver_id'=>$this->user->id]);
         }else if($request->status_update=="5"){
             $set = 2;
             $pengiriman=true;

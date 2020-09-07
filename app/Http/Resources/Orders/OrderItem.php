@@ -46,6 +46,7 @@ class OrderItem extends JsonResource
             'send_id' => $this->resource->send_id,
             'send_date' => $this->resource->send_date,
             'proses_date' => $this->resource->proses_date,
+            'arrival_date' => $this->resource->arrival_date,
             'detail' => $det
 
         ];
