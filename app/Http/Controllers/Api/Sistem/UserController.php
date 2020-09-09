@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\Sistem;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Models\Orders\Order;
+use App\Models\Purchases\Purchase;
 use JWTAuth;
 use App\Http\Resources\Users\UserList as UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -122,5 +124,24 @@ class UserController extends Controller
     public function isValid($column,$data)
     {
         return User::where($column,$data)->get()->count();
+    }
+
+    public function delete($id)
+    {
+        $sp = Order::where('creator_id',$id)->get();
+        $pc = Purchase::where('creator_id',$id)->get();
+        if(empty($sp) && empty($sp)){
+            $user = User::find($id);
+            $user->delete();
+            return response()->json([
+                'success' => true,
+                'message' =>  "User Berhasil dihapus"
+               ],200);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' =>  "User Tidak dapat dihapus"
+               ],400);
+        }
     }
 }

@@ -72,8 +72,11 @@ class User extends Authenticatable implements JWTSubject
             case 7:
                 $role_display="Manajer Bisnis";
               break;
-            case 7:
+            case 8:
                 $role_display="Manajer Operasional";
+              break;
+            case 9:
+                $role_display="Owner";
               break;
             case 10:
                 $role_display="Customer";
