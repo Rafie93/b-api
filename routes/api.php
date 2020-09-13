@@ -19,6 +19,11 @@ Route::post('login', 'Auth\UserController@login');
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('user', 'Auth\UserController@getAuthenticatedUser');
 
+    //Endpoint Dashboard
+    Route::get('manager/dashboard', 'Api\Dashboard\DashboardManagerController@index');
+    Route::get('stores/dashboard', 'Api\Dashboard\DashboardStoreController@index');
+
+
     /*Endpoind Route Kategori
     */
     Route::get('category/list_parent', 'Api\Products\CategoryController@list_parent');
@@ -39,6 +44,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      /*Endpoind Produk
     */
     Route::get('product/list', 'Api\Products\ProductController@list');
+    Route::get('product/stock_store_alert', 'Api\Products\ProductController@list_stok_store_alert');
     Route::get('product/stock_store', 'Api\Products\ProductController@list_stok_store');
     Route::get('product/stock_gudang', 'Api\Products\ProductController@list_stok_gudang');
     Route::get('product/supplier_by_product/{id}', 'Api\Products\ProductController@getSupplierByProduct');
@@ -71,6 +77,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('order/gudang', 'Api\Order\OrderController@pesananGudang');
 
     /* Endpoint Route Purchase */
+    Route::get('purchase/supplier','Api\Purchase\PurchaseSupplierControoler@supplier_order');
+    Route::get('purchase/supplier_product_order/{id}', 'Api\Purchase\PurchaseSupplierControoler@supplier_product_order');
+    Route::get('purchase/supplier_product_by_supplier/{id}', 'Api\Purchase\PurchaseSupplierControoler@supplier_product_by_supplier');
+
     Route::get('purchase/list', 'Api\Purchase\PurchaseController@index');
     Route::get('purchase/detail/{id}', 'Api\Purchase\PurchaseController@detail');
     Route::post('purchase/updateByWarehouse/{id}','Api\Purchase\PurchaseController@updateByWarehouse');

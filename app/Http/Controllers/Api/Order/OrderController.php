@@ -282,22 +282,61 @@ class OrderController extends Controller
                  ]);
                  foreach ($request->detail as $key => $value) {
                      $product_id = $value["product_id"];
+                     $quantity_send = $value["jumlah_kirim"];
                      $quantity_received = $value["quantity_received"];
                      $unit = $value["unit"];
                      $status_barang = $value["status_barang"];
+                     $quantity_order = $value['quantity'];
 
-                     if($status_barang==5){
-                        $this->stokIn($product_id,$quantity_received,$unit,1,$order->code);
-                     }else{
-                        $quantity_received = 0;
-                        Order::find($id)->update(['status'=>7]);
+                     if($status_barang==4){
+                         $status=4;
+                         if($quantity_received==0){
+                            $status=4;
+                            Order::find($id)->update(['status'=>7]);
+                         }else if($quantity_received == $quantity_send){
+                            $status=5;
+                            $this->stokIn($product_id,$quantity_received,$unit,1,$order->code);
+                         }else if($quantity_received < $quantity_send){
+                            $status_barang = 6; // status sebagian
+                            $this->stokIn($product_id,$quantity_received,$unit,1,$order->code);
+                            Order::find($id)->update(['status'=>7]);
+                         }
+
+                        OrderDetail::where('product_id',$product_id)
+                                    ->where('order_product_id',$id)
+                                    ->update([
+                                        'quantity_received'=> $quantity_received,
+                                        'status' => $status
+                                    ]);
+
+
+                     }else if($status_barang==6){
+                         $status_barang=6;
+                        if($quantity_received==0){
+                            $status=6;
+                            Order::find($id)->update(['status'=>7]);
+                         }else if($quantity_received == $quantity_send){
+                            $status=5;
+                         }else if($quantity_received < $quantity_send){
+                            $status_barang = 6; // status sebagian
+                            Order::find($id)->update(['status'=>7]);
+                         }
+                        $qtyLama = OrderDetail::where('order_product_id',$id)
+                                                ->where('product_id',$product_id)
+                                                ->first()
+                                                ->quantity_received;
+                        $newQty = $quantity_received - $qtyLama;
+
+                        OrderDetail::where('product_id',$product_id)
+                                            ->where('order_product_id',$id)
+                                            ->update([
+                                                'quantity_received'=> $quantity_received,
+                                                'status' => $status
+                                            ]);
+                        $this->stokIn($product_id,$newQty,$unit,1,$order->code);
                      }
-                     OrderDetail::where('product_id',$product_id)
-                            ->where('order_product_id',$id)
-                            ->update([
-                                'quantity_received'=> $quantity_received,
-                                'status' => $status_barang
-                            ]);
+
+
                  }
 
              DB::commit();
@@ -389,7 +428,7 @@ class OrderController extends Controller
             $set = 1;
             $request->merge(['proses_date'=>$dateProses,'receiver_id'=>$this->user->id]);
         }else if($request->status_update=="5"){
-            $set = 2;
+            $set = 4;
             $pengiriman=true;
             $request->merge(['send_date'=>$dateProses,'send_id'=>$this->user->id]);
         }
@@ -496,7 +535,7 @@ class OrderController extends Controller
                     ->first();
         if ($productStock){
             $stockNow = $productStock->stock;
-            $stockNew = $stockNow-$quantity;
+            $stockNew = $stockNow+$quantity;
             $productStock->update(['stock'=>$stockNew]);
         }else{
             ProductStock::insert([

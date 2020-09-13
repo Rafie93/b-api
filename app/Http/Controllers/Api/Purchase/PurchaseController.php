@@ -62,33 +62,35 @@ class PurchaseController extends Controller
                      $product_id = $value["product_id"];
                      $unit = $value["unit"];
                      $price = $value["price"];
-                     $quantity = $value["quantity"];
+                     $quantity = $value["quantity_purchase"];
 
-                     $detail = new \App\Models\Purchases\PurchaseDetail;
-                     $detail->purchase_id = $purchaseId;
-                     $detail->product_id = $product_id;
-                     $detail->unit = $unit;
-                     $detail->price = $price;
-                     $detail->quantity = $quantity;
-                     $detail->quantity_received = $quantity;
-                     $detail->save();
+                     if($quantity>0){
+                        $detail = new \App\Models\Purchases\PurchaseDetail;
+                        $detail->purchase_id = $purchaseId;
+                        $detail->product_id = $product_id;
+                        $detail->unit = $unit;
+                        $detail->price = $price;
+                        $detail->quantity = $quantity;
+                        $detail->quantity_received = $quantity;
+                        $detail->status = 1;
+                        $detail->save();
 
-                     //Update Di product order detail :
-                     OrderDetail::join('order_product', function ($join) {
-                                $join->on('order_product.id', '=', 'order_product_detail.order_product_id')
-                                        ->where('order_product.type', '=', 2);
-                                })
-                                ->where('order_product_detail.product_id',$product_id)
-                                ->where('order_product_detail.status',1)
-                                ->update([
-                                    'order_product_detail.status'=>2,
-                                    'order_product.status'=>2,
-                                    'order_product.proses_date'=>date('Y-m-d H:i:s')
-                                ]);
-
+                        //Update Di product order detail :
+                        OrderDetail::join('order_product', function ($join) {
+                                   $join->on('order_product.id', '=', 'order_product_detail.order_product_id')
+                                           ->where('order_product.type', '=', 2);
+                                   })
+                                   ->where('order_product_detail.product_id',$product_id)
+                                   ->where('order_product_detail.status',1)
+                                   ->update([
+                                       'order_product_detail.status'=>2,
+                                       'order_product.status'=>2,
+                                       'order_product.proses_date'=>date('Y-m-d H:i:s')
+                                   ]);
+                     }
                  }
 
-             DB::commit();
+                 DB::commit();
              return response()->json([
                  'success'=>true,
                  'message'=> "Pembelian Berhasil dibuat",
@@ -106,6 +108,7 @@ class PurchaseController extends Controller
          }
 
     }
+
     public function approvePurchase(Request $request,$id)
     {
         $purchase = Purchase::find($id);
@@ -134,22 +137,70 @@ class PurchaseController extends Controller
                  $purchase->update($request->all());
                  foreach ($request->detail as $key => $value) {
                      $product_id = $value["product_id"];
+                     $status_barang = $value["status_barang"];
+
+                     $jumlahOrder = $this->cekQtyOrder($id,$product_id);
                      $quantity_received = $value["quantity_received"]!=null ?  $value["quantity_received"] : 0 ;
                      $unit = $value["unit"];
-                     $date_expired =$value["expired_date"];
+                     $date_expired =$value["expired_date"]==null ? null : $value["expired_date"];
+                    if($date_expired!=null){
+                        $_date_expired = date("Y-m-d", strtotime($date_expired));
+                    }else{
+                        $_date_expired=null;
+                    }
+                    $status=1;
 
-                     $_date_expired = date("Y-m-d", strtotime($date_expired));
+                    if($status_barang==1){ // konfirm new barang datang
+                        if($quantity_received==0){
+                            $status=1;
+                            Purchase::find($id)->update(['status'=>5]);
+                        }else if($quantity_received<$jumlahOrder){
+                            $status=3;
+                            $this->insertStockExpired($product_id,$quantity_received,$unit,$_date_expired,2);
+                            $this->stokIn($product_id,$quantity_received,$unit,2,$purchase->code);
+                            Purchase::find($id)->update(['status'=>5]);
+                        }else if($quantity_received==$jumlahOrder){
+                            $status=2;
+                            $this->insertStockExpired($product_id,$quantity_received,$unit,$_date_expired,2);
+                            $this->stokIn($product_id,$quantity_received,$unit,2,$purchase->code);
+                        }
 
-                     $purchaseDetail = PurchaseDetail::where('purchase_id',$id)
-                                                ->where('product_id',$product_id)
-                                                ->update([
-                                                    'quantity_received'=> $quantity_received,
-                                                    'unit' => $unit,
-                                                    'exp_date'=>$_date_expired
-                                                ]) ;
-                    $this->updatePriceProduct($product_id,$purchaseDetail);
-                    $this->insertStockExpired($product_id,$quantity_received,$unit,$_date_expired,2);
-                    $this->stokIn($product_id,$quantity_received,$unit,2,$purchase->code);
+                        $purchaseDetail = PurchaseDetail::where('purchase_id',$id)
+                                                    ->where('product_id',$product_id)
+                                                    ->update([
+                                                        'quantity_received'=> $quantity_received,
+                                                        'unit' => $unit,
+                                                        'exp_date'=>$_date_expired,
+                                                        'status'=> $status
+                                                    ]) ;
+                    }else if($status_barang=3){ // konfirm barang sisa
+                       $quantity_receivedOld = PurchaseDetail::where('purchase_id',$id)->where('product_id',$product_id)->first()->quantity_received;
+                       $qtyAdd = $quantity_received - $quantity_receivedOld;
+
+                       $status=1;
+                        if($quantity_received==0){
+                            $status=1;
+                            Purchase::find($id)->update(['status'=>5]);
+                        }else if($quantity_received<$jumlahOrder){
+                            $status=3;
+                            $this->insertStockExpired($product_id,$qtyAdd,$unit,$_date_expired,2);
+                            $this->stokIn($product_id,$qtyAdd,$unit,2,$purchase->code);
+                            Purchase::find($id)->update(['status'=>5]);
+                        }else if($quantity_received==$jumlahOrder){
+                            $status=2;
+                            $this->insertStockExpired($product_id,$qtyAdd,$unit,$_date_expired,2);
+                            $this->stokIn($product_id,$qtyAdd,$unit,2,$purchase->code);
+                        }
+
+                       $purchaseDetail = PurchaseDetail::where('purchase_id',$id)
+                                        ->where('product_id',$product_id)
+                                        ->update([
+                                            'quantity_received'=> $quantity_received,
+                                            'unit' => $unit,
+                                            'exp_date'=>$_date_expired,
+                                            'status'=> $status
+                                        ]) ;
+                    }
                  }
 
              DB::commit();
@@ -161,7 +212,6 @@ class PurchaseController extends Controller
 
          } catch (\PDOException $e) {
              DB::rollBack();
-
              return response()->json([
                  'success'=>false,
                  'message'=>$e
@@ -218,6 +268,16 @@ class PurchaseController extends Controller
         //     //'price_modal' => $purchaseDetail->price
         // ]);
     }
+
+    public function cekQtyOrder($purchaseId,$product_id)
+    {
+        $pd = PurchaseDetail::where('purchase_id',$purchaseId)
+                        ->where('product_id',$product_id)
+                        ->first();
+        return $pd->quantity;
+    }
+
+
 
 
 }

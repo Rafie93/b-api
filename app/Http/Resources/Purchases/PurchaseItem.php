@@ -28,6 +28,7 @@ class PurchaseItem extends JsonResource
                 'quantity_received' => $d->quantity_received,
                 'expired_date' => $d->exp_date,
                 'unit'  => $d->unit,
+                'status_barang'  => $d->status,
                 'notes' => $d->notes
             );
         }
@@ -47,6 +48,7 @@ class PurchaseItem extends JsonResource
             'supplier_id' => $this->resource->supplier_id,
             'supplier_name' => $this->resource->supplier(),
             'approved_date'=> $this->resource->approved_date,
+            'grand_total' => $this->resource->grand_total,
             'detail' => $det
         ];
     }

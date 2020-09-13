@@ -27,5 +27,8 @@ class OrderDetail extends Model
         }else if($status==5){
             return "Diterima";
         }
+        else if($status==6){
+            return "Diterima Sebagian";
+        }
     }
 }

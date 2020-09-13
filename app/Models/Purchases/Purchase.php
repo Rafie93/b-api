@@ -9,7 +9,7 @@ use App\Models\Supplier\Supplier;
 class Purchase extends Model
 {
     protected $table = "purchase";
-    protected $fillable = ["code","date","notes","status","creator_id","supplier_id","receive_date","receive_id","approved_date","approved_id"];
+    protected $fillable = ["code","date","notes","status","creator_id","supplier_id","receive_date","receive_id","approved_date","approved_id","grand_total","sales"];
     public function status()
     {
         $status = $this->status;
@@ -21,6 +21,8 @@ class Purchase extends Model
             return "Pembelian Dibatalkan";
         }else if($status==4){
             return "Pembelian Di Approve";
+        }else if($status==5){
+            return "Barang Datang Tidak Sesuai";
         }else{
             return "Draft";
         }

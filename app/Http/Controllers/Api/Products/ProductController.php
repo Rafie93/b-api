@@ -35,6 +35,14 @@ class ProductController extends Controller
             'product' =>   $products
            ],200);
     }
+    public function list_stok_store_alert(Request $request)
+    {
+        $products = $this->queryObject->product_stok_store_alert_get($request);
+        return response()->json([
+            'success' => true,
+            'product' =>   $products
+           ],200);
+    }
 
     public function list_stok_gudang(Request $request)
     {

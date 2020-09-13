@@ -26,7 +26,7 @@ class Order extends Model
             return "Pengiriman di Approved";
         }
         else if($status==5){
-            return "Pesanan Sedang Dikirim";
+            return "Pesanan Dikirim";
         }else if($status==6){
             return "Pesanan Sudah Datang";
         }

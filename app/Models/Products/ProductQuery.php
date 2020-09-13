@@ -51,6 +51,26 @@ class ProductQuery
         }
         return $products;
     }
+    public function product_stok_store_alert_get($request)
+    {
+        $products = DB::table('product')
+                    ->leftJoin('product_stock', function($join){
+                        $join->on('product.id', '=', 'product_stock.product_id')
+                            ->where('product_stock.source', '=', '1');
+                    })
+                    ->leftJoin('category', 'product.category_id', '=', 'category.id')
+                    ->select('product.id','product.sku','product.barcode','product.name',
+                            'product.alert_quantity','category.name as category',
+                            'product.brand','product.price','product.price_modal',
+                            'product.thumbnail','product_stock.unit',
+                            DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock')
+                            )
+                    ->where('product.is_active',1)
+                    ->orderBy('product_stock.stock','asc')
+                    ->get();
+
+        return $products;
+    }
 
 
     public function product_stok_gudang_get($request)

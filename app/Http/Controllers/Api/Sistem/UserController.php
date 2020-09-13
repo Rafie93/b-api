@@ -128,9 +128,9 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $sp = Order::where('creator_id',$id)->get();
-        $pc = Purchase::where('creator_id',$id)->get();
-        if(empty($sp) && empty($sp)){
+        $sp = Order::where('creator_id',$id)->get()->count();
+        $pc = Purchase::where('creator_id',$id)->get()->count();
+        if(($pc<=0) && ($sp<=0)){
             $user = User::find($id);
             $user->delete();
             return response()->json([

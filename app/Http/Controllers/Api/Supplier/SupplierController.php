@@ -58,9 +58,9 @@ class SupplierController extends Controller
 
     public function delete(Request $request,$id)
     {
-        $sp = SupplierProduct::where('supplier_id',$id)->get();
-        $pc = Purchase::where('supplier_id',$id)->get();
-        if(empty($sp) && empty($sp)){
+        $sp = SupplierProduct::where('supplier_id',$id)->get()->count();
+        $pc = Purchase::where('supplier_id',$id)->get()->count();
+        if(($pc<=0) && ($sp<=0)){
             $supplier = Supplier::find($id);
             $supplier->delete();
             return response()->json([
