@@ -30,7 +30,7 @@ class BrandController extends Controller
         $brand = Brand::create($request->all());
         return response()->json([
             'success' => true,
-            'brands' =>    new BrandResource($brand)
+            'message' => "Merk Berhasil disimpan"
            ],200);
     }
 
@@ -40,7 +40,7 @@ class BrandController extends Controller
         $brand-update($request->all());
         return response()->json([
             'success' => true,
-            'brands' =>   new BrandResource($brand)
+            'message' => "Merk Berhasil diubah"
            ],200);
     }
     public function delete(Request $request,$id)
