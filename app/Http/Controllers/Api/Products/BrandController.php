@@ -11,7 +11,7 @@ class BrandController extends Controller
 {
     public function list(Request $request)
     {
-        $list = Brand::orderBy('code','desc')
+        $list = Brand::orderBy('name','desc')
                     ->when($request->id, function ($query) use ($request) {
                         if($id!=0){
                             $query->where('id', '=',$request->id);
