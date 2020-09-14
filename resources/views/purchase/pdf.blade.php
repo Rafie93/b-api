@@ -178,27 +178,29 @@
                 </tr>
                 <tr>
                     <td>
-                        <table   style="width: 50%">
+                        <table   style="width: 100%">
                             <tr>
                                 <td>TANGGAL </td>
-                                <td>:
-                                     {{Carbon\Carbon::parse($purchase->date)->format('D, d M Y')}}
-                                </td>
-
+                                <td>:{{Carbon\Carbon::parse($purchase->date)->format('D, d M Y')}}</td>
+                                <td align="right">KEPADA&nbsp;&nbsp; </td>
+                                <td align="right">:&nbsp;{{$purchase->supplier()}}</td>
                             </tr>
                             <tr>
                                 <td>WAKTU </td>
-                                <td>:
-                                    {{Carbon\Carbon::parse($purchase->date)->format('H:i:s')}}
-                                </td>
+                                <td>: {{Carbon\Carbon::parse($purchase->date)->format('H:i:s')}}</td>
+                                <td  align="right">TELEPON</td>
+                                <td  align="right">:&nbsp;{{$purchase->supplier_id!=null ? $purchase->supplier_pivot->phone : '-'}}</td>
                             </tr>
                             <tr>
                                 <td>NO. PO </td>
                                 <td>: {{$purchase->code}} </td>
+                                <td  align="right">ALAMAT&nbsp;&nbsp; </td>
+                                <td  align="right">:&nbsp;{{$purchase->supplier_id!=null ? $purchase->supplier_pivot->address : '-'}}</td>
                             </tr>
                         </table>
 
                     </td>
+
                 </tr>
                 <tr>
                     <td align="center"><br>

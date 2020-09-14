@@ -36,6 +36,10 @@ class Purchase extends Model
             return "Tanpa Supplier";
         }
     }
+    public function supplier_pivot()
+    {
+        return $this->belongsTo('App\Models\Supplier\Supplier','supplier_id');
+    }
 
     public function creator()
     {

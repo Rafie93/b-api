@@ -36,11 +36,15 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     /**
      * Endpoint Route Brand dan unit */
-    Route::get('brand/list', 'Api\Products\BrandController@list');
     Route::get('unit/list', 'Api\Products\UnitController@list');
     Route::post('unit/store', 'Api\Products\UnitController@store');
     Route::post('unit/update/{id}', 'Api\Products\UnitController@update');
     Route::post('unit/delete/{id}', 'Api\Products\UnitController@delete');
+
+    Route::get('brand/list', 'Api\Products\BrandController@list');
+    Route::post('brand/store', 'Api\Products\BrandController@store');
+    Route::post('brand/update/{id}', 'Api\Products\BrandController@update');
+    Route::post('brand/delete/{id}', 'Api\Products\BrandController@delete');
 
      /*Endpoind Produk
     */

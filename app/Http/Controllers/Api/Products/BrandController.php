@@ -43,4 +43,13 @@ class BrandController extends Controller
             'brands' =>   new BrandResource($brand)
            ],200);
     }
+    public function delete(Request $request,$id)
+    {
+        $brand = Brand::find($id);
+        $brand->delete();
+        return response()->json([
+            'success' => true,
+            'message' =>  "Merk Berhasil dihapus"
+           ],200);
+    }
 }
