@@ -38,7 +38,7 @@ class DashboardKeuanganController extends Controller
             [
             'success' => true,
             'dashboard' => array(
-                'pesanan_gudang' => $pesanan_gudang,
+                'pesanan_gudang' => $pesanan_baru_gudang,
                 'supplier_ready_order' => $supplier_ready,
                 'po_berjalan'=> $po_berjalan,
                 'po_selesai' => $po_selesai
