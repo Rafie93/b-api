@@ -298,6 +298,7 @@ class OrderController extends Controller
                  $order = Order::find($id);
                  $order->update([
                      'status'=>6,
+                     'arrival_id'=>$this->user->id,
                      'arrival_date'=> date('Y-m-d H:i:s')
                  ]);
                  foreach ($request->detail as $key => $value) {
