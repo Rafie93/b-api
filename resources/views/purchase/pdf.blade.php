@@ -228,7 +228,7 @@
                 <tr>
                     <td  align="center">{{$purchase->receive()}}</td>
                     <td  align="center">{{$purchase->creator()}}</td>
-                    <td  align="center">{{$purchase->approved()}}</td>
+                    <td  align="center">{{$purchase->penanggung_jawab()}}</td>
                 </tr>
             </tbody>
         </table>

@@ -61,6 +61,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     /*Endpoind Route Order
     */
     Route::get('order/list', 'Api\Order\OrderController@index');
+    Route::get('order/list_pengiriman', 'Api\Order\OrderController@list_pengiriman');
+
     Route::get('order/list_gudang', 'Api\Order\OrderController@listApprovedOrderGudang');
 
     Route::get('order/produkStore', 'Api\Order\ListProductController@pesananStore');

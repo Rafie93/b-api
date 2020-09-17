@@ -43,14 +43,14 @@ class Purchase extends Model
 
     public function creator()
     {
-        $userId = $this->creator_id;
-        return User::find($userId)->first()->name;
+        $creator = $this->creator_id;
+        return User::where('id',$creator)->first()->name;
     }
     public function receive()
     {
         $userId = $this->receive_id;
         if ($userId!=null){
-            return User::find($userId)->first()->name;
+            return User::where('id',$userId)->first()->name;
         }else{
             return "";
         }
@@ -59,19 +59,18 @@ class Purchase extends Model
     {
         $userId = $this->approved_id;
         if ($userId!=null){
-            return User::find($userId)->first()->name;
+            return User::where('id',$userId)->first()->name;
         }else{
             return "";
         }
     }
     public function penanggung_jawab()
     {
-        $userId = $this->creator_id;
-        $penanggungId =  User::find($userId)->first()->penanggung_id;
-        if($penanggungId == null){
+        $userId = $this->approved_id;
+        if ($userId!=null){
             return User::where('id',$userId)->first()->name;
         }else{
-            return User::where('id',$penanggungId)->first()->name;
+            return "";
         }
     }
 }

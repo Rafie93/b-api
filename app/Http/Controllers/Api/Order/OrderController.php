@@ -39,6 +39,26 @@ class OrderController extends Controller
             'orders' => new Resource($listOrder)
            ],200);
     }
+
+    public function list_pengiriman(Request $request)
+    {
+          $listOrder = Order::orderBy('id','desc')
+                                    ->where('type',1)
+                                    ->whereNotNull('code_gudang')
+                                    ->when($request->status, function ($query) use ($request) {
+                                        $query->where('status', '=',$request->status);
+
+                                    })
+                                    ->when($request->keyword, function ($query) use ($request) {
+                                        $query->where('code', 'LIKE','%'.$request->keyword.'%');
+                                    })
+                                    ->get();
+        return response()->json([
+            'success' => true,
+            'orders' => new Resource($listOrder)
+           ],200);
+    }
+
     public function listApprovedOrderGudang(Request $request)
     {
           $listOrder = Order::orderBy('id','desc')
