@@ -10,6 +10,7 @@ use App\Models\Sistem\NumberSequence;
 use App\User;
 use App\Http\Resources\Customer\CustomerList as CustomerResoure;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -50,28 +51,42 @@ class CustomerController extends Controller
             ], 400);
         }
 
-        $user = new \App\User;
-        $user->role_id = 10; // Role for kasir
-        $user->name =  $request->name;
-        $user->email = $email;
-        $user->username = $email;
-        $user->phone = $no_hp;
-        $user->birthday = $this->replaceDate($request->birthday);
-        $user->gender = $request->gender;
-        $user->group = 2;
-        $user->password = Hash::make($no_hp);
-        $user->save();
+        try
+        {
+             DB::beginTransaction();
+                $user = new \App\User;
+                $user->role_id = 10; // Role for kasir
+                $user->name =  $request->name;
+                $user->email = $email;
+                $user->username = $email;
+                $user->phone = $no_hp;
+                $user->birthday = $this->replaceDate($request->birthday);
+                $user->gender = $request->gender;
+                $user->group = 2;
+                $user->password = Hash::make($no_hp);
+                $user->save();
 
-        $request->merge([
-            'user_id' => $user->id,
-            'code'=> $this->$request->code==null ? $this->generateCode() : $request->code,
-            'point' => 0
-        ]);
-        $customer = Customer::create($request->all());
-        return response()->json([
-            'success' => true,
-            'message' =>  "Customer Berhasil ditambahkan"
-           ],200);
+                $request->merge([
+                    'user_id' => $user->id,
+                    'code'=> $this->$request->code==null ? $this->generateCode() : $request->code,
+                    'point' => 0
+                ]);
+                $customer = Customer::create($request->all());
+             DB::commit();
+
+             return response()->json([
+                'success' => true,
+                'message' =>  "Customer Berhasil ditambahkan"
+               ],200);
+        }catch(\PDOException $e){
+            DB::rollBack();
+            return response()->json([
+                'success'=>false,
+                'message'=>$e
+            ], 400);
+        }
+
+
     }
 
     public function update(Request $request,$id)
