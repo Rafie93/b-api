@@ -68,7 +68,7 @@ class CustomerController extends Controller
 
                 $request->merge([
                     'user_id' => $user->id,
-                    'code'=> $this->$request->code==null ? $this->generateCode() : $request->code,
+                    'code'=> $this->generateCode() ,
                     'point' => 0
                 ]);
                 $customer = Customer::create($request->all());
