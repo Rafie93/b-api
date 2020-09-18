@@ -120,6 +120,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('sales/list', 'Api\Sales\SalesController@index');
     Route::post('sales/store', 'Api\Sales\SalesController@store');
 
+    /* Endpoint Route Add CUstomer */
+    Route::get('customer/list','Api\Customer\CustomerController@index');
+    Route::post('customer/store','Api\Customer\CustomerController@store');
+    Route::post('customer/update/{id}','Api\Customer\CustomerController@update');
+    Route::post('customer/delete/{id}','Api\Customer\CustomerController@delete');
+
     //end api
 
 
