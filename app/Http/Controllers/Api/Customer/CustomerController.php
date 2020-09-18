@@ -26,9 +26,9 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'name' => 'required|min:2',
-            'email' => 'required|min:5',
-            'phone' => 'required|integer|min:6',
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
         ]);
 
         $no_hp = $request->phone;
@@ -56,7 +56,7 @@ class CustomerController extends Controller
         $user->email = $email;
         $user->username = $email;
         $user->phone = $no_hp;
-        $user->birthday = $request->birthday;
+        $user->birthday = $this->replaceDate($request->birthday);
         $user->gender = $request->gender;
         $user->group = 2;
         $user->password = Hash::make($no_hp);
@@ -64,7 +64,7 @@ class CustomerController extends Controller
 
         $request->merge([
             'user_id' => $user->id,
-            'code'=> $this->generateCode(),
+            'code'=> $this->$request->code==""||$this->$request->code==null ? $this->generateCode() : $request->code,
             'point' => 0
         ]);
         $customer = Customer::create($request->all());
@@ -136,5 +136,10 @@ class CustomerController extends Controller
             $number = "0".$number;
         }
         return 'MB'.$number;
+    }
+
+    public function replaceDate($date)
+    {
+        return date("Y-m-d", strtotime($date));
     }
 }
