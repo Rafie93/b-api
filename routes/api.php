@@ -118,6 +118,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     /* Sales Route */
     Route::get('sales/list', 'Api\Sales\SalesController@index');
+    Route::get('sales/detail/{id}', 'Api\Sales\SalesController@detail');
     Route::post('sales/store', 'Api\Sales\SalesController@store');
 
     /* Endpoint Route Add CUstomer */

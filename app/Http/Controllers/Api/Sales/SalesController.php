@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Api\Sales;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sales\Sale;
+use App\Models\Sales\SaleDetail;
 use JWTAuth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Products\Product;
 use App\Models\Products\ProductStock;
 use App\Models\Products\ProductStockHistory;
+use App\Http\Resources\Sales\SaleList as SaleResource;
+use App\Http\Resources\Sales\SaleItem as SaleItem;
+use App\Http\Resources\Sales\SaleDetail as SaleDetailResource;
 
 class SalesController extends Controller
 {
@@ -32,13 +36,19 @@ class SalesController extends Controller
                                     ->get();
         return response()->json([
             'success' => true,
-            'sales' => $list
+            'sales' => new SaleResource($list)
            ],200);
     }
 
     public function detail($id)
     {
-        # code...
+        $list = Sale::where('id',$id)->get()->first();
+        $detail = SaleDetail::where('sale_id',$id)->get();
+        return response()->json([
+            'success' => true,
+            'sales' => new SaleItem($list),
+            'detail' => new SaleDetailResource($detail)
+           ],200);
     }
 
     public function store(Request $request)

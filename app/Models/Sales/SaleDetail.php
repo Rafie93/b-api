@@ -8,4 +8,9 @@ class SaleDetail extends Model
 {
     protected $table = "sale_detail";
     protected $fillable = ["sale_id","product_id","variant_id","price_product","price_sale","quantity","type"];
+
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Products\Product','product_id');
+    }
 }
