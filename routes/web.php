@@ -20,3 +20,6 @@ Route::get('order/pengiriman-pdf/{id}', 'OrderController@pengiriman_pdf');
 Route::get('order/order-gudang-pdf/{id}', 'OrderController@order_gudang_pdf');
 Route::get('purchase/purchase-pdf/{id}', 'PurchaseController@pdf');
 Route::get('purchase/arrival/{id}', 'PurchaseController@arrifal_pdf');
+
+Route::get('pos/struk/{id}', 'StrukController@pdf');
+
