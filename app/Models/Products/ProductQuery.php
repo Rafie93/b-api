@@ -196,6 +196,7 @@ class ProductQuery
 
     public function product_update($request,$id,$userId)
     {
+
         $sku = $request->sku;
         $category_id = $request->category_id;
         if($sku=="") $sku = $this->auto_sku($request->brand);
@@ -223,7 +224,7 @@ class ProductQuery
                         $supplier_id = $s["supplier_id"];
                         SupplierProduct::create([
                             'supplier_id'=>$supplier_id,
-                            'product_id' => $product->id
+                            'product_id' => $id
                         ]);
                     }
                 DB::commit();
@@ -243,7 +244,7 @@ class ProductQuery
                         $supplier_id = $s["supplier_id"];
                         SupplierProduct::create([
                             'supplier_id'=>$supplier_id,
-                            'product_id' => $product->id
+                            'product_id' => $id
                         ]);
                     }
                 DB::commit();
