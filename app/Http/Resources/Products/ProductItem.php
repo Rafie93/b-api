@@ -16,7 +16,7 @@ class ProductItem extends JsonResource
     {
         return  [
             'id'        => $this->resource->id,
-            'type' => $this->resource->type,
+            'product_type' => $this->resource->product_type,
             'sku' => $this->resource->sku,
             'name'      => $this->resource->name,
             'category_id'   => $this->resource->category_id,

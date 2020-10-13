@@ -26,6 +26,7 @@ class SalesController extends Controller
     public function index(Request $request)
     {
         $list = Sale::orderBy('id','desc')
+                                    ->where('transaction_by','Kasir')
                                     ->when($request->status, function ($query) use ($request) {
                                         $query->where('status', '=',$request->status);
 

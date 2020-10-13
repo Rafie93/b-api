@@ -18,10 +18,14 @@ class SaleDetailItem extends JsonResource
             'id'    => $this->resource->id,
             'product_id'    => $this->resource->product_id,
             'product_name'    => $this->resource->product->name,
+            'variant_id'    => $this->resource->variant_id,
             'quantity'    => $this->resource->quantity,
             'price' => $this->resource->price_sale,
             'type' => $this->resource->type,
-            'sub_total' =>  $this->resource->price_sale  *  $this->resource->quantity
+            'keterangan'    => $this->resource->keterangan,
+            'sub_total' =>  $this->resource->price_sale  *  $this->resource->quantity,
+            'thumbnail' => $this->resource->product->thumbnail()
+
         ];
     }
 }

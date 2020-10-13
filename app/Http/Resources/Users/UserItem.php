@@ -29,7 +29,9 @@ class UserItem extends JsonResource
             'birthday' => $this->resource->birthday,
             'email' => $this->resource->email,
             'address' => $this->resource->address,
-            'status_txt' => $this->resource->status()
+            'status_txt' => $this->resource->status(),
+            'fcm_token' => $this->resource->fcm_token,
+            'image' => $this->resource->image()
         ];
     }
 }

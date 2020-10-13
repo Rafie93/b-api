@@ -99,4 +99,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->is_active==1 ? "Aktif" : 'Tidak Aktif';
     }
+
+    public function image()
+    {
+        return $this->image==null ||$this->image=="" ? asset('images/image-not-available.png') : asset('images/user').'/'.$this->id.'/'.$this->image;
+    }
 }

@@ -38,4 +38,9 @@ class Product extends Model
           return "";
       }
     }
+
+    public function sale_detail()
+    {
+        return $this->hasMany('App\Models\Sales\SaleDetail','product_id');
+    }
 }

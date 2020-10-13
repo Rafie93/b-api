@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function list_parent(Request $request)
     {
-        $parentCategory = Category::whereNull('parent_id')->get();
+        $parentCategory = Category::orderBy('name','asc')->whereNull('parent_id')->where('is_active',1)->get();
         return response()->json([
             'success' => true,
             'categories' =>  new CategoryResource($parentCategory)

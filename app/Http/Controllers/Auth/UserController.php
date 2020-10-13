@@ -20,6 +20,7 @@ class UserController extends Controller
         $credentials = [
             $loginType => $request->username,
             'password' => $request->password,
+            'group' => 1,
             'is_active'=>1
         ];
 

@@ -12,9 +12,26 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+ //START API FOR MOBILE ANDROID TANPA LOGIN
 Route::post('register', 'Auth\UserController@register');
 Route::post('login', 'Auth\UserController@login');
+Route::post('register_customer', 'Api\Sistem\AccountController@register');
+Route::post('login_customer', 'Api\Sistem\AccountController@login');
+Route::get('products', 'Api\Products\ProductForCustomerController@getProducts');
+Route::get('product_detail/{id}', 'Api\Products\ProductForCustomerController@getProductDetail');
+Route::get('product_commentar/{id}', 'Api\Products\ProductForCustomerController@getCommentar');
+
+Route::get('bank', 'Api\Sistem\BankController@index');
+Route::get('bank_account','Api\Sistem\BankController@bank_account');
+Route::get('banner', 'Api\HomeMobile\BannerController@getBanner');
+Route::get('terlaris', 'Api\HomeMobile\TerlarisController@getProductTerlaris');
+Route::post('rates', 'Api\Transaction\RateShippingController@rate_check');
+Route::get('voucher', 'Api\Sistem\VoucherController@index');
+Route::get('voucher/check', 'Api\Sistem\VoucherController@checkVoucher');
+Route::get('kategori', 'Api\Products\CategoryController@list_parent');
+
+
+ //END API FOR MOBILE ANDROID TANPA LOGIN
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('user', 'Auth\UserController@getAuthenticatedUser');
@@ -128,6 +145,24 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('customer/delete/{id}','Api\Customer\CustomerController@delete');
 
     //end api
+
+    //START API FOR MOBILE ANDROID
+    Route::get('account', 'Api\Sistem\AccountController@getAccount');
+    Route::post('commentar/create', 'Api\Products\ProductForCustomerController@commentar_create');
+    Route::post('rating/create', 'Api\Products\ProductRatingController@rating_create');
+    Route::get('rating/list', 'Api\Products\ProductRatingController@getRating');
+    Route::get('transaction', 'Api\Sales\SalesForCustomerController@index');
+    Route::get('transaction/detail/{id}', 'Api\Sales\SalesForCustomerController@detail');
+    Route::post('transaction/store', 'Api\Sales\SalesForCustomerController@store');
+    Route::post('transaction/bayar', 'Api\Sales\SalesForCustomerController@bayar');
+    Route::post('transaction/batal', 'Api\Sales\SalesForCustomerController@batal');
+    Route::post('transaction/terima', 'Api\Sales\SalesForCustomerController@terima');
+
+    Route::post('changepassword', 'Api\Sistem\AccountController@changepassword');
+
+    Route::get('inbox/product/comment/{id}', 'Api\Inbox\InboxController@detail');
+    Route::get('inbox/product/list', 'Api\Inbox\InboxController@list');
+    Route::post('inbox/product/store', 'Api\Inbox\InboxController@store');
 
 
 
