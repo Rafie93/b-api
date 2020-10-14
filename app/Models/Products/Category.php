@@ -11,7 +11,7 @@ class Category extends Model
 
     public function image()
     {
-        return !$this->image ? asset('images/empty.png') : asset('images').'/category/'.$this->id.'/'.$this->image ;
+        return !$this->image ? asset('images/kategori/cake.png') : asset('images').'/kategori/'.$this->image ;
     }
 
     public function parent()
