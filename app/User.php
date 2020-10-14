@@ -102,6 +102,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function image()
     {
-        return $this->image==null ||$this->image=="" ? asset('images/image-not-available.png') : asset('images/user').'/'.$this->id.'/'.$this->image;
+        return $this->image==null ||$this->image=="" ? asset('images/avatar.png') : asset('images/user').'/'.$this->id.'/'.$this->image;
     }
 }
