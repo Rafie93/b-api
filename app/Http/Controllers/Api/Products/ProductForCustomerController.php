@@ -35,7 +35,7 @@ class ProductForCustomerController extends Controller
                      ->when($request->filterKategori, function ($query) use ($request) {
                         $categoryCheck = Category::where('id',$request->filterKategori)->first();
                         if($categoryCheck->parent_id==null){
-                            $all_category =  Category::select('id')->where('parent_id',$request->filterKategori);
+                            $all_category =  Category::select('id')->where('parent_id',$request->filterKategori)->get();
                             $query->whereIn('category_id', $all_category->toArray());
                         }else{
                             $query->where('category_id', '=', "{$request->filterKategori}");
