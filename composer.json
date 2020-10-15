@@ -39,7 +39,8 @@
             "App\\": "app/"
         },
         "files":[
-            "app/Helpers/GeneralSistem.php"
+            "app/Helpers/GeneralSistem.php",
+            "app/Helpers/FCloudMessaging.php"
         ],
         "classmap": [
             "database/seeds",
