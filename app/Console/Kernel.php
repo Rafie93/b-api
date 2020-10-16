@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\BatalOrderCustomerAuto',
+        'App\Console\Commands\KonfirmOrderCustomerAuto',
+        'App\Console\Commands\KonfirmPaymentCustomerAuto',
     ];
 
     /**
@@ -26,6 +28,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->command('customer:batal-order-customer-auto')->everyMinute();
+        $schedule->command('customer:konfirm-auto-success-payment')->everyMinute();
+        $schedule->command('customer:konfirm-auto-terima')->everyMinute();
+
     }
 
     /**
