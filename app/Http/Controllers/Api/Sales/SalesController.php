@@ -14,6 +14,7 @@ use App\Models\Products\ProductStockHistory;
 use App\Http\Resources\Sales\SaleList as SaleResource;
 use App\Http\Resources\Sales\SaleItem as SaleItem;
 use App\Http\Resources\Sales\SaleDetail as SaleDetailResource;
+use App\User;
 
 class SalesController extends Controller
 {
@@ -37,6 +38,58 @@ class SalesController extends Controller
                                     ->get();
         return response()->json([
             'success' => true,
+            'sales' => new SaleResource($list)
+           ],200);
+    }
+    public function customer(Request $request)
+    {
+        $list = Sale::orderBy('id','desc')
+                    ->where('transaction_by','Customer')
+                    ->when($request->status, function ($query) use ($request) {
+                        // $query->where('status', '=',$request->status);
+                        if($request->status==3){
+                            $query->whereIn('status_order',[2,3]);
+                        }else{
+                            $query->where('status_order', '=',$request->status);
+                        }
+                    })
+                    // ->when($request->status_order, function ($query) use ($request) {
+                    //     if($request->status_order==3){
+                    //         $query->whereIn('status_order',[2,3]);
+                    //     }else{
+                    //         $query->where('status_order', '=',$request->status_order);
+                    //     }
+                    // })
+                    ->when($request->keyword, function ($query) use ($request) {
+                        $query->where('code', 'LIKE','%'.$request->keyword.'%');
+                    })
+                    ->get();
+        return response()->json([
+            'success' => true,
+            'sales' => new SaleResource($list)
+           ],200);
+    }
+    public function list_pembayaran(Request $request)
+    {
+        $list = Sale::orderBy('id','desc')
+                    ->where('transaction_by','Customer')
+                    ->when($request->status, function ($query) use ($request) {
+                        if($request->status==1){
+                            $query->where('status',1);
+                        }else  if($request->status==2){
+                            $query->where('status',1)->whereNotNull('date_payment')->whereNull('date_payment_confirmation');
+                        }
+                        else{
+                            $query->where('status', 0);
+                        }
+                    })
+                    ->when($request->keyword, function ($query) use ($request) {
+                        $query->where('code', 'LIKE','%'.$request->keyword.'%');
+                    })
+                    ->get();
+        return response()->json([
+            'success' => true,
+            'total_perlu_tindakan' => Sale::where('transaction_by','Customer')->where('status',1)->whereNotNull('date_payment')->whereNull('date_payment_confirmation')->get()->count(),
             'sales' => new SaleResource($list)
            ],200);
     }
@@ -158,5 +211,79 @@ class SalesController extends Controller
             'source' => 1,
             'ref_code' => $code
         ]);
+    }
+
+    // endpoint update transaction sales
+    public function update_transaction(Request $request,$id)
+    {
+        $now = date('Y-m-d H:i:s');
+        $status = $request->status_update;
+        $sale = Sale::where('id',$id)->first();
+        if($sale->payment_methode=='Transfer' && $sale->status==0 && $sale->date_payment_confirmation!=null){
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer ini belum melakukan pembayaran, tidak bisa melanjutkan proses'
+            ],400);
+        }else{
+            $sale->update(['status_order'=>$status]);
+            if($status==3){
+            $sale->update(['date_shipping'=>$now]);
+            }else  if($status==99){
+            $sale->update(['date_cancel'=>$now]);
+            }
+            if ($sale){
+                $creatorId = $sale->creator_id;
+                $code = $sale->code;
+                $user = User::where('id',$creatorId)->first();
+                if($user->fcm_token!=null){
+                    $judul = "Hai ".$user->name;
+                    $isi = "No. Pesanan Anda ".$code;
+                    if($status==99){
+                    $isi .= " Telah dibatalkan";
+                    }else{
+                        $isi .= " Akan dikirim oleh kurir kami, harap tunggu kedatangan pesanan anda!!";
+                    }
+                    sendMessageToDevice($judul,
+                                        $isi,
+                                        $user->fcm_token);
+
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Status Pesanan sudah diperbaharui',
+                    'sales' => new SaleItem($sale)
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ooooppsss gagal memperbaharui'
+                ],400);
+            }
+        }
+    }
+
+    public function konfirmasi_pembayaran(Request $request,$id)
+    {
+        $now = date('Y-m-d H:i:s');
+        $sale = Sale::where('id',$id)->first();
+        if($sale->date_payment==null){
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer ini belum melakukan pembayaran'
+            ],400);
+        }else  if($sale->date_payment_confirmation!=null){
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer ini sudah bayar'
+            ],400);
+        }
+        else{
+            $sale->update(['date_payment_confirmation'=>$now]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran pada pesanan ini sudah di konfirmasi',
+                'sales' => new SaleItem($sale)
+            ],200);
+        }
     }
 }

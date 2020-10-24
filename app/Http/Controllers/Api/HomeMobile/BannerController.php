@@ -11,9 +11,12 @@ class BannerController extends Controller
 {
     public function getBanner(Request $request)
     {
+        $banner = Banner::where('is_active',1)->get();
         return response()->json([
             'success'=>true,
-            'slider'=>new BannerResource(Banner::all())
+            'banner'=>new BannerResource($banner)
         ], 200);
     }
+
+
 }

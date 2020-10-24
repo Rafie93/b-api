@@ -14,4 +14,9 @@ class ProductImage extends Model
         return $this->image=="" ? asset('images/empty.png') : asset('images').'/product/'.$this->product_id.'/'.$this->image ;
     }
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class,'product_id');
+    }
+
 }

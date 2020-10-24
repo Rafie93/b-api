@@ -48,11 +48,13 @@ class SaleItem extends JsonResource
             'total_shipping' => $this->resource->total_shipping,
             'total_tax' => $this->resource->total_tax,
             'total_item'=> SaleDetail::where('sale_id',$this->resource->id)->get()->count(),
+            'discount' => $this->resource->discount,
             'address' =>$this->resource->address,
             'lattitude' =>$this->resource->lattitude,
             'longitude' =>$this->resource->longitude,
             'jarak' => $this->resource->jarak,
             'notes' => $this->resource->notes,
+            'bukti' => $this->resource->image(),
         ];
     }
 }

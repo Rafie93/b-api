@@ -10,10 +10,10 @@ use App\Models\Sales\SaleDetail;
 
 class StrukController extends Controller
 {
-    public function pdf($id)
+    public function pdf($code)
     {
 
-        $sale = Sale::where('code',$id)->first();
+        $sale = Sale::where('code',$code)->first();
         $detail = SaleDetail::where('sale_id',$sale->id)->get();
 
         $hight = 300;

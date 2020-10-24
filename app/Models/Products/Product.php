@@ -8,7 +8,8 @@ class Product extends Model
 {
     protected $table = "product";
     protected $fillable = ["sku","barcode_type","barcode","category_id","name","description","brand","price_modal","price",
-    "thumbnail","image","alert_quantity","alert_quantity_warehouse","tax_id","is_tax_method","is_active","is_show_in_menu","creator_id","product_type"];
+    "thumbnail","image","alert_quantity","alert_quantity_warehouse","tax_id","is_tax_method","is_active","is_show_in_menu","creator_id","product_type",
+    "price_promo","start_promotion","end_promotion","price_type","price_type_in"];
 
     public function thumbnail()
     {
@@ -42,5 +43,15 @@ class Product extends Model
     public function sale_detail()
     {
         return $this->hasMany('App\Models\Sales\SaleDetail','product_id');
+    }
+
+    public function supplier()
+    {
+        return $this->hasMany(SupplierProduct::class,'product_id');
+    }
+
+    public function image_product()
+    {
+        return $this->hasMany(ProductImage::class,'product_id');
     }
 }

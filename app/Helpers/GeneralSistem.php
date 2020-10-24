@@ -113,6 +113,10 @@ function terbilang($nilai) {
 	}
 	return $hasil." Rupiah";
 }
+function replaceDate($date)
+{
+    return date("Y-m-d H:i:s", strtotime($date));
+}
 
 
 ?>

@@ -69,12 +69,24 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('product/list', 'Api\Products\ProductController@list');
     Route::get('product/stock_store_alert', 'Api\Products\ProductController@list_stok_store_alert');
     Route::get('product/stock_store', 'Api\Products\ProductController@list_stok_store');
+    Route::get('product/will_add_paket', 'Api\Products\ProductController@product_stok_store_stok_not_null_get');
+    Route::get('product/will_edit_paket/{id}', 'Api\Products\PaketProductController@edit');
+
     Route::get('product/stock_gudang', 'Api\Products\ProductController@list_stok_gudang');
     Route::get('product/supplier_by_product/{id}', 'Api\Products\ProductController@getSupplierByProduct');
     Route::get('product/edit/{id}', 'Api\Products\ProductController@edit');
     Route::post('product/delete/{id}', 'Api\Products\ProductController@delete');
     Route::post('product/store', 'Api\Products\ProductController@store');
+    Route::post('product/paket/store', 'Api\Products\PaketProductController@store');
+    Route::post('product/paket/batal/{id}', 'Api\Products\PaketProductController@batal');
+    Route::post('product/paket/update/{id}', 'Api\Products\PaketProductController@update');
+    Route::post('product/paket/delete/{id}', 'Api\Products\PaketProductController@delete');
+
     Route::post('product/update/{id}', 'Api\Products\ProductController@update');
+    Route::get('product/list_gambar_produk/{id}', 'Api\Products\ProductController@list_gambar_produk');
+    Route::post('product/uploadGambar/{id}','Api\Products\ProductController@uploadGambar');
+    Route::post('product/updateUploadGambar/{id}','Api\Products\ProductController@updateUploadGambar');
+    Route::post('product/deleteGambar/{id}','Api\Products\ProductController@deleteGambar');
 
     /*Endpoind Route Order
     */
@@ -135,6 +147,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     /* Sales Route */
     Route::get('sales/list', 'Api\Sales\SalesController@index');
+    Route::get('sales/customer', 'Api\Sales\SalesController@customer');
+    Route::get('sales/list_pembayaran', 'Api\Sales\SalesController@list_pembayaran');
+    Route::post('sales/konfirmasi_pembayaran/{id}', 'Api\Sales\SalesController@konfirmasi_pembayaran');
+    Route::post('sales/update_transaction/{id}', 'Api\Sales\SalesController@update_transaction');
     Route::get('sales/detail/{id}', 'Api\Sales\SalesController@detail');
     Route::post('sales/store', 'Api\Sales\SalesController@store');
 
@@ -144,7 +160,30 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('customer/update/{id}','Api\Customer\CustomerController@update');
     Route::post('customer/delete/{id}','Api\Customer\CustomerController@delete');
 
-    //end api
+    /* Endpoint banner */
+    Route::get('banner/list', 'Api\Marketing\BannerController@list');
+    Route::post('banner/store', 'Api\Marketing\BannerController@store');
+    Route::post('banner/update/{id}', 'Api\Marketing\BannerController@update');
+    Route::post('banner/delete/{id}', 'Api\Marketing\BannerController@delete');
+
+    /* Endpoint voucher */
+    Route::get('voucher/list', 'Api\Marketing\VoucherController@list');
+    Route::post('voucher/store', 'Api\Marketing\VoucherController@store');
+    Route::post('voucher/update/{id}', 'Api\Marketing\VoucherController@update');
+    Route::post('voucher/delete/{id}', 'Api\Marketing\VoucherController@delete');
+
+    /* Bank Account */
+    Route::get('bank/list', 'Api\Sistem\BankController@list');
+    Route::post('bank/store', 'Api\Sistem\BankController@store');
+    Route::post('bank/update/{id}', 'Api\Sistem\BankController@update');
+    Route::get('bank/edit/{id}', 'Api\Sistem\BankController@edit');
+    Route::post('bank/delete/{id}', 'Api\Sistem\BankController@delete');
+
+    /* Setting Tarif */
+    Route::get('sistem/tarif/list', 'Api\Sistem\RateShippingController@list');
+    Route::post('sistem/tarif/update/{id}', 'Api\Sistem\RateShippingController@update');
+
+    //end api bahtera
 
     //START API FOR MOBILE ANDROID
     Route::get('account', 'Api\Sistem\AccountController@getAccount');
@@ -157,9 +196,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('transaction/bayar', 'Api\Sales\SalesForCustomerController@bayar');
     Route::post('transaction/batal', 'Api\Sales\SalesForCustomerController@batal');
     Route::post('transaction/terima', 'Api\Sales\SalesForCustomerController@terima');
-
     Route::post('changepassword', 'Api\Sistem\AccountController@changepassword');
-
     Route::get('inbox/product/comment/{id}', 'Api\Inbox\InboxController@detail');
     Route::get('inbox/product/list', 'Api\Inbox\InboxController@list');
     Route::post('inbox/product/store', 'Api\Inbox\InboxController@store');

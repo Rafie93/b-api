@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 use App\Models\Products\Product;
+use App\Models\Products\ProductImage;
 use App\Models\Products\ProductStockHistory;
 use App\Models\Products\ProductStockExpired;
 use App\Models\Products\Brand;
@@ -18,7 +19,11 @@ class ProductQuery
 {
     public function product_get($request)
     {
-       return Product::all();
+       return Product::orderBy('id','desc')
+                            ->when($request->product_type, function ($query) use ($request) {
+                                $query->where('product_type', '=',$request->product_type);
+                            })
+                            ->get();
     }
     public function product_stok_store_get($request)
     {
@@ -39,7 +44,35 @@ class ProductQuery
                                 DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock'),
                                 DB::raw('(CASE WHEN stock_gudang.stock IS NULL THEN 0 ELSE stock_gudang.stock END) AS stock_gudang')
                             )
-                            ->where('product.is_active',1);
+                    ->where('product.is_active',1);
+
+        if($request->product_sorting==1){
+            $products = $products->orderBy('product.name','asc')
+                                 ->get();
+        }else{
+            $products = $products->where('product.product_type',1)
+                                 ->orderBy('product_stock.stock','asc')
+                                 ->get();
+        }
+        return $products;
+    }
+    public function product_stok_store_stok_not_null_get($request)
+    {
+        $products = DB::table('product')
+                    ->leftJoin('product_stock', function($join){
+                        $join->on('product.id', '=', 'product_stock.product_id')
+                             ->where('product_stock.source', '=', '1');
+                     })
+                    ->leftJoin('category', 'product.category_id', '=', 'category.id')
+                    ->select('product.id','product.sku','product.barcode','product.name',
+                            'product.alert_quantity','category.name as category',
+                            'product.brand','product.price','product.price_modal',
+                            'product.thumbnail',
+                                DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock')
+                            )
+                    ->where('product.is_active',1)
+                    ->where('product.product_type',1)
+                    ->where('stock','>',0);
 
         if($request->product_sorting==1){
             $products = $products->orderBy('product.name','asc')
@@ -125,10 +158,13 @@ class ProductQuery
             $requestData = $request->data;
             $someRequest = json_decode($requestData, true);
             $request->merge($someRequest);
-            $request->merge(['sku'=>$requestData->sku=="" ? $this->auto_sku($requestData->brand) : $requestData->sku,
+            $request->merge(['sku'=>$request->sku=="" ? $this->auto_sku($request->brand) : $request->sku,
                                 'barcode_type'=>'128', 'creator_id' => $userId
                             ]);
 
+            if($request->is_promo=='true'){
+                $request->merge(['start_promotion'=> replaceDate($request->mulai_promosi) ,'end_promotion'=> replaceDate($request->selesai_promosi)]);
+            }
             try{
                 DB::beginTransaction();
                 $product = Product::create($request->all());
@@ -144,7 +180,7 @@ class ProductQuery
                         'source'=>2
                     ]);
                 }
-                $suppliers = $requestData->supplier;
+                $suppliers = $request->supplier;
                 foreach($suppliers as $s){
                     $supplier_id = $s["supplier_id"];
                     SupplierProduct::create([
@@ -158,6 +194,9 @@ class ProductQuery
             }
        }else{
             $request->merge(['sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $userId]);
+            if($request->is_promo=='true'){
+                $request->merge(['start_promotion'=> replaceDate($request->mulai_promosi) ,'end_promotion'=> replaceDate($request->selesai_promosi)]);
+            }
             try{
                 DB::beginTransaction();
                     $product = Product::create($request->all());
@@ -206,9 +245,12 @@ class ProductQuery
             $requestData = $request->data;
             $someRequest = json_decode($requestData, true);
             $request->merge($someRequest);
-            $request->merge(['sku'=>$requestData->sku=="" ? $this->auto_sku($requestData->brand) : $requestData->sku,
+            $request->merge(['sku'=>$request->sku=="" ? $this->auto_sku($request->brand) : $request->sku,
                                 'barcode_type'=>'128','creator_id' => $userId
                             ]);
+            if($request->is_promo=='true'){
+                $request->merge(['start_promotion'=> replaceDate($request->mulai_promosi) ,'end_promotion'=> replaceDate($request->selesai_promosi)]);
+            }
             try{
                 DB::beginTransaction();
                     $product = Product::find($id);
@@ -218,7 +260,7 @@ class ProductQuery
                     $request->file('file')->move('images/product/'.$product->id,$fileName);
                     $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
 
-                    $suppliers = $requestData->supplier;
+                    $suppliers = $request->supplier;
                     $sp = SupplierProduct::where('product_id',$id)->delete();
                     foreach($suppliers as $s){
                         $supplier_id = $s["supplier_id"];
@@ -233,6 +275,15 @@ class ProductQuery
             }
        }else{
             $request->merge(['sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $userId]);
+            if($request->is_promo=='true'){
+                $request->merge(['start_promotion'=> replaceDate($request->mulai_promosi) ,'end_promotion'=> replaceDate($request->selesai_promosi)]);
+            }
+            $results = explode('/', trim($request->thumbnail,'/'));
+            if(count($results) > 0){
+                $last = $results[count($results) - 1];
+                $request->merge(['thumbnail'=> $last]);
+            }
+
             try{
                 DB::beginTransaction();
                     $product = Product::find($id);
@@ -270,6 +321,11 @@ class ProductQuery
         return strtoupper($sku);
     }
 
+    public function gambar_product_get($id)
+    {
+        $image = ProductImage::where('product_id',$id)->get();
+    }
+
       // public function product_update($request,$id)
     // {
     //     $sku = $request->sku;
@@ -287,5 +343,6 @@ class ProductQuery
     //    }
     //    return $product;
     // }
+
 
 }

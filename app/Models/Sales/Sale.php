@@ -42,4 +42,9 @@ class Sale extends Model
         }
         return "";
     }
+
+    public function image()
+    {
+        return $this->image=="" ? '' : asset('images').'/sale/'.$this->id.'/'.$this->image ;
+    }
 }

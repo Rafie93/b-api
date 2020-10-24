@@ -21,7 +21,6 @@ class CreateVoucherTable extends Migration
             $table->integer('nilai');
             $table->integer('maksimal');
             $table->integer('maksimal_user');
-
             $table->string('jenis_nilai')->default('rupiah')->comment('rupiah, persen');
             $table->date('berlaku_start');
             $table->date('berlaku_end');
