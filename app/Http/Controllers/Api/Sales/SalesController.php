@@ -240,8 +240,12 @@ class SalesController extends Controller
                     $isi = "No. Pesanan Anda ".$code;
                     if($status==99){
                     $isi .= " Telah dibatalkan";
-                    }else{
+                    }else if($status==3){
                         $isi .= " Akan dikirim oleh kurir kami, harap tunggu kedatangan pesanan anda!!";
+                    }else if($status==2){
+                        $isi .= " Akan sedang kami proses, harap tunggu kedatangan pesanan anda!!";
+                    }else if($status==4){
+                        $isi .= " Telah kami di selesaikan oleh sistem kami";
                     }
                     sendMessageToDevice($judul,
                                         $isi,
