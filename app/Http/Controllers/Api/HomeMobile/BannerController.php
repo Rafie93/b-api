@@ -14,7 +14,7 @@ class BannerController extends Controller
         $banner = Banner::all();
         return response()->json([
             'success'=>true,
-            'banner'=>new BannerResource($banner)
+            'slider'=>new BannerResource($banner)
         ], 200);
     }
 
