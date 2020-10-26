@@ -117,7 +117,11 @@ class InboxController extends Controller
 
     public function detail_inbox(Request $request,$creatorId,$productId)
     {
-        $comment = ProductComment::where('product_id',$productId)->where('creator_id',$creatorId)->get();
+        $comment = ProductComment::where('product_id',$productId)
+                                ->where(function($query) use ($creatorId){
+                                    $query->where('to','admin')->orWhere('creator_id', '=',$creatorId);
+                                })
+                                ->get();
         return response()->json([
             'success'=>true,
             'product_comment'=>new CommentProductResource($comment)
