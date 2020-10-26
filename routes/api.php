@@ -184,6 +184,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('sistem/tarif/list', 'Api\Sistem\RateShippingController@list');
     Route::post('sistem/tarif/update/{id}', 'Api\Sistem\RateShippingController@update');
 
+    //inbox
+    Route::get('inbox/list', 'Api\Inbox\InboxController@list_to_admin');
+    Route::get('inbox/chat/{customer}/{product}', 'Api\Inbox\InboxController@detail_inbox');
+    Route::get('inbox/store_admin/{customer}/{product}', 'Api\Inbox\InboxController@detail_inbox');
+
     //end api bahtera
 
     //START API FOR MOBILE ANDROID

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Products\CommentProductList as CommentProductResource;
 use App\Models\Products\ProductComment;
 use App\Models\Products\Product;
-
+use App\User;
 class InboxController extends Controller
 {
 
@@ -25,6 +25,33 @@ class InboxController extends Controller
         foreach ($list_inbox as $row){
             $product_comment = ProductComment::orderBy('id','desc')->where('product_id',$row->product_id)->first();
             $out[] = array(
+                'product_id' => $row->product_id,
+                'product_name' => Product::find($row->product_id)->name,
+                'last_pesan' => $product_comment->comment,
+                'is_read' => $product_comment->is_read,
+                'type' => $product_comment->type
+            );
+        }
+
+        return response()->json([
+                                'success'=>true,
+                                'data'=> $out
+                            ], 200);
+    }
+
+    public function list_to_admin(Request $request)
+    {
+        $by = auth()->user()->id;
+        $list_inbox = ProductComment::select('product_id','creator_id')
+                            ->groupBy('product_id','creator_id')
+                            ->where('to','admin')
+                            ->get();
+        $out=[];
+        foreach ($list_inbox as $row){
+            $product_comment = ProductComment::orderBy('id','desc')->where('product_id',$row->product_id)->first();
+            $out[] = array(
+                'customer_id' => $row->creator_id,
+                'customer_name' => User::find($row->creator_id)->name,
                 'product_id' => $row->product_id,
                 'product_name' => Product::find($row->product_id)->name,
                 'last_pesan' => $product_comment->comment,
@@ -86,5 +113,41 @@ class InboxController extends Controller
                                   ->where('product_id',$productId)->get();
       }
       return $cooment;
+    }
+
+    public function detail_inbox(Request $request,$creatorId,$productId)
+    {
+        $comment = ProductComment::where('product_id',$productId)->where('creator_id',$creatorId)->get();
+        return response()->json([
+            'success'=>true,
+            'product_id' => $id,
+            'product_comment'=>new CommentProductResource($comment)
+        ], 200);
+    }
+
+    public function store_admin(Request $request,$customerId,$productId)
+    {
+       $chat = ProductComment::create([
+            'product_id'=>$productId,
+            'comment' => $request->pesan,
+            'creator_id' => auth()->user()->id,
+            'to' => $customerId,
+            'type' => 'admin',
+            'is_read' => 0
+        ]);
+        if($chat){
+            $user = User::where('id',$customerId)->first();
+            if($user->fcm_token!=null){
+                $judul = "Hai ".$user->name;
+                $isi = $request->pesan;
+                sendMessageToDevice($judul,
+                                    $isi,
+                                    $user->fcm_token);
+            }
+        }
+
+        return response()->json([
+            'success' =>true
+        ], 200);
     }
 }
