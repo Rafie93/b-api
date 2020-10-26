@@ -41,6 +41,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('stores/dashboard', 'Api\Dashboard\DashboardStoreController@index');
     Route::get('warehouse/dashboard', 'Api\Dashboard\DashboardWarehouseController@index');
     Route::get('keuangan/dashboard', 'Api\Dashboard\DashboardKeuanganController@index');
+    Route::get('cs/dashboard', 'Api\Dashboard\DashboardCsController@index');
 
 
     /*Endpoind Route Kategori
