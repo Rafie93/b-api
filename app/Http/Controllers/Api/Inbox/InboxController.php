@@ -120,7 +120,6 @@ class InboxController extends Controller
         $comment = ProductComment::where('product_id',$productId)->where('creator_id',$creatorId)->get();
         return response()->json([
             'success'=>true,
-            'product_id' => $id,
             'product_comment'=>new CommentProductResource($comment)
         ], 200);
     }
