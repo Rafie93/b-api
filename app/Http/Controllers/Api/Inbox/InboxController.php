@@ -119,7 +119,7 @@ class InboxController extends Controller
     {
         $comment = ProductComment::where('product_id',$productId)
                                 ->where(function($query) use ($creatorId){
-                                    $query->where('to','admin')->orWhere('creator_id', '=',$creatorId);
+                                    $query->where('to',$creatorId)->orWhere('creator_id', '=',$creatorId);
                                 })
                                 ->get();
         return response()->json([
