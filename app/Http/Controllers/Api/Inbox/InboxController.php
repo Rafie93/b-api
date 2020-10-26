@@ -122,8 +122,17 @@ class InboxController extends Controller
                                     $query->where('to',$creatorId)->orWhere('creator_id', '=',$creatorId);
                                 })
                                 ->get();
+
+        $update = ProductComment::where('product_id',$productId)
+                                ->where('to','admin')
+                                ->where('creator_id',$creatorId)
+                                ->update(
+                                    ['is_read'=>1]
+                                );
+
         return response()->json([
             'success'=>true,
+            'product_name' => Product::find($productId)->name,
             'product_comment'=>new CommentProductResource($comment)
         ], 200);
     }

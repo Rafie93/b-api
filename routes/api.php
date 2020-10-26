@@ -187,7 +187,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     //inbox
     Route::get('inbox/list', 'Api\Inbox\InboxController@list_to_admin');
     Route::get('inbox/chat/{customer}/{product}', 'Api\Inbox\InboxController@detail_inbox');
-    Route::get('inbox/store_admin/{customer}/{product}', 'Api\Inbox\InboxController@detail_inbox');
+    Route::post('inbox/store_admin/{customer}/{product}', 'Api\Inbox\InboxController@store_admin');
 
     //end api bahtera
 
@@ -206,7 +206,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('inbox/product/comment/{id}', 'Api\Inbox\InboxController@detail');
     Route::get('inbox/product/list', 'Api\Inbox\InboxController@list');
     Route::post('inbox/product/store', 'Api\Inbox\InboxController@store');
-
 
 
 });
