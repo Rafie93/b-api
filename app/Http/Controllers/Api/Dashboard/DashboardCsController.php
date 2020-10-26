@@ -16,9 +16,9 @@ class DashboardCsController extends Controller
             [
             'success' => true,
             'dashboard' => array(
-                'chat' => $this->chat,
-                'pembayaran' => $this->pembayaran,
-                'pesanan'=> $this->pesanan
+                'chat' => $this->chat(),
+                'pembayaran' => $this->pembayaran(),
+                'pesanan'=> $this->pesanan()
             )
            ],200);
     }
