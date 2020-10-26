@@ -150,7 +150,7 @@ class InboxController extends Controller
         if($chat){
             $user = User::where('id',$customerId)->first();
             if($user->fcm_token!=null){
-                $judul = "Hai ".$user->name;
+                $judul = 'CS Bahteramart';
                 $isi = $request->pesan;
                 sendMessageToDevice($judul,
                                     $isi,
