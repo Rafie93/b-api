@@ -230,7 +230,7 @@ class ProductQuery
             }
 
        }
-       return $product;
+       return Product::orderBy('id','desc')->first();
     }
 
     public function product_update($request,$id,$userId)
