@@ -227,10 +227,14 @@ class ProductQuery
                 DB::commit();
             }catch (\PDOException $e) {
                 DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'error' =>   $e
+                   ],200);
             }
 
        }
-       return Product::orderBy('id','desc')->first();
+       return $product;
     }
 
     public function product_update($request,$id,$userId)
