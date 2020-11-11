@@ -159,7 +159,7 @@ class OrderController extends Controller
         $order = Order::where('id',$orderId)->first();
         return response()->json([
             'id' => $order->id,
-            'type' => $order->type,
+            'type' => intval($order->type),
             'approved_order_date' => $order->approved_order_date,
             'approved_date'=> $order->approved_date,
             'code'=> $order->code,
