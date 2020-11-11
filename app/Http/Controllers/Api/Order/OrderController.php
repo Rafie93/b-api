@@ -166,7 +166,7 @@ class OrderController extends Controller
             'code_gudang'=> $order->code_gudang,
             'date' => $order->date,
             'notes' => $order->notes,
-            'status'=> $order->status,
+            'status'=> intval($order->status),
             'status_display' => $order->status(),
             'penanggung_jawab' => $order->penanggung_jawab(),
             'pemohon'   => $order->creator(),
