@@ -38,7 +38,7 @@ class PurchaseItem extends JsonResource
             'code' => $this->resource->code,
             'notes'      => $this->resource->notes,
             'date' => $this->resource->date,
-            'status'   => $this->resource->status,
+            'status'   => intval($this->resource->status),
             'status_display'      => $this->resource->status(),
             'creator_id' => $this->resource->creator_id,
             'creator_display' => $this->resource->creator(),

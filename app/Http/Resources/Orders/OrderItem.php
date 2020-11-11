@@ -34,7 +34,7 @@ class OrderItem extends JsonResource
             'code_gudang' => $this->resource->code_gudang,
             'notes'      => $this->resource->notes,
             'date' => $this->resource->date,
-            'status'   => $this->resource->status,
+            'status'   => intval($this->resource->status),
             'status_display'      => $this->resource->status(),
             'approved_date' => $this->resource->approved_date,
             'approved_order_date' => $this->resource->approved_order_date,
