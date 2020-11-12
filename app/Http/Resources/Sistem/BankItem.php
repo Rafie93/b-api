@@ -16,7 +16,9 @@ class BankItem extends JsonResource
     {
         return  [
             'id'      => $this->resource->id,
+            'value'      => $this->resource->bank_name,
             'bank_name'     => $this->resource->bank_name,
+            'label'     => $this->resource->bank_name,
             'bank_account_name'     => $this->resource->bank_account_name,
             'bank_account_no'     => $this->resource->bank_account_no,
             'description'     => $this->resource->description,

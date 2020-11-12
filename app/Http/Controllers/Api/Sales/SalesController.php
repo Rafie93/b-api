@@ -108,6 +108,12 @@ class SalesController extends Controller
     public function store(Request $request)
     {
         $code = $request->code ? $request->code : $this->generateCode();
+        $payment_channel =  $request->paymentChannel;
+        if($request->payment_metode=='Tunai'){
+            $payment_channel = 'Cash';
+        }else if($request->payment_metode=='Debit'){
+            $payment_channel = $request->bank_tujuan;
+        }
         $data = array(
             'code' => $code,
             'discount' => $request->diskon,
@@ -115,6 +121,7 @@ class SalesController extends Controller
             'payment_methode' => $request->payment_metode,
             'total_price' => $request->grand_total,
             'total_before_tax' => $request->grand_total,
+            'total_bill' => $request->grand_total,
             'total_service' => 0,
             'total_price_product' => $request->total_price,
             'total_shipping' => $request->pengiriman,
@@ -123,7 +130,11 @@ class SalesController extends Controller
             'customer_id' => $request->customer_id,
             'status'    => $request->status,
             'date' => $request->date ? $request->date : date('Y-m-d'),
-            'time' => $request->time ? $request->time : date('H:i:s')
+            'time' => $request->time ? $request->time : date('H:i:s'),
+            'no_kartu' =>  $request->payment_metode=='Debit' ? $request->no_kartu : '',
+            'date_payment' => $request->date ? $request->date : date('Y-m-d'),
+            'date_payment_confirmation' => $request->date ? $request->date : date('Y-m-d'),
+            'payment_channel' =>  $payment_channel
         );
 
         try
