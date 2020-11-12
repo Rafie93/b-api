@@ -220,13 +220,14 @@
 
                     </td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td align="center"><br>
                        @include('order.list')
                     </td>
-                </tr>
+                </tr> --}}
             </tbody>
         </table><br><br>
+        @include('order.list')
         <table class="recipt-table" style="width: 100%">
             <tbody>
                 <tr>
