@@ -26,7 +26,7 @@ class OrderController extends Controller
                         ->whereNotNull('send_date')
                         ->first();
         $type = "pengiriman";
-        return view('order.pdf',compact('order'));
+        return view('order.pdf',compact('order','type'));
         // $pdf = PDF::setOptions(['isRemoteEnabled' => true])
         //                         ->loadView('order.pdf', compact('order','type'))
         //                         ->setPaper('A4','portrait');
