@@ -274,7 +274,7 @@
                 @endif
             </tbody>
 
-        </table><br><br>
+        </table><br><br><br><br>
         <table class="recipt-table" style="width: 100%">
             <tbody>
                 <tr>
