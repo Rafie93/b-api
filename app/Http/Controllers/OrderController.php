@@ -16,7 +16,7 @@ class OrderController extends Controller
         $type = "order";
         $pdf = PDF::setOptions(['isRemoteEnabled' => true])
                                 ->loadView('order.pdf', compact('order','type'))
-                                ->setPaper('A4','portrait');
+                                ->setPaper('a4','portrait');
          return $pdf->stream($id.'.e-surat.pdf');
         // return view('order.pdf',compact('order'));
     }
@@ -26,10 +26,10 @@ class OrderController extends Controller
                         ->whereNotNull('send_date')
                         ->first();
         $type = "pengiriman";
-        return view('order.pdf',compact('order','type'));
-        // $pdf = PDF::setOptions(['isRemoteEnabled' => true])
-        //                         ->loadView('order.pdf', compact('order','type'))
-        //                         ->setPaper('A4','portrait');
-        // return $pdf->stream($id.'.e-surat.pdf');
+        // return view('order.pdf',compact('order','type'));
+        $pdf = PDF::setOptions(['isRemoteEnabled' => true])
+                                ->loadView('order.pdf', compact('order','type'))
+                                ->setPaper('a4','portrait');
+        return $pdf->stream($id.'.e-surat.pdf');
     }
 }
