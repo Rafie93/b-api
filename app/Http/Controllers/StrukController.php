@@ -26,6 +26,6 @@ class StrukController extends Controller
         $pdf = PDF::setOptions(['isRemoteEnabled' => true])
                                 ->loadView('pos.pdf', compact('sale','detail'))
                                 ->setPaper($customPaper);
-        return $pdf->stream($id.'.invoice.pdf');
+        return $pdf->stream($code.'.invoice.pdf');
     }
 }
