@@ -27,8 +27,8 @@ class OrderController extends Controller
                         ->first();
         $type = "pengiriman";
         $pdf = PDF::setOptions(['isRemoteEnabled' => true])
-                                ->loadView('order.pdf', compact('order','type'))
-                                ->setPaper('A4','portrait');
-         return $pdf->stream($id.'.e-surat.pdf');
+                                ->loadView('order.pdf', compact('order','type'));
+        return $pdf->download('laporan-pengiriman-pdf');
+        // return $pdf->stream($id.'.e-surat.pdf');
     }
 }
