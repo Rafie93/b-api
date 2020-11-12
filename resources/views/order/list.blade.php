@@ -1,6 +1,6 @@
 @inject('orderQuery', 'App\Models\Orders\OrderQuery')
 
-<table style="width: 100%">
+<table class="receipt-table full-bordered" style="width: 100%">
     <thead>
         <tr>
             <td align="center">NO</td>
