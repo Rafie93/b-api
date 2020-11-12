@@ -28,7 +28,7 @@
             $rowCount += 1
         @endphp
         @endforeach
-        @if($rowCount < 26)
+        {{-- @if($rowCount < 26)
             @php
             for ($i=1; $i < 26-$rowCount; $i++) {
                 echo "<tr>";
@@ -41,7 +41,7 @@
                 echo "</tr>";
             }
              @endphp
-        @endif
+        @endif --}}
     </tbody>
 
 </table>
