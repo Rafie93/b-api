@@ -40,14 +40,27 @@ class ProductQuery
                     ->select('product.id','product.sku','product.barcode','product.name',
                             'product.alert_quantity','category.name as category',
                             'product.brand','product.price','product.price_modal',
-                            'product.thumbnail',
+                            'product.thumbnail','product.price_promo','product.start_promotion','end_promotion',
                                 DB::raw('(CASE WHEN product_stock.stock IS NULL THEN 0 ELSE product_stock.stock END) AS stock'),
                                 DB::raw('(CASE WHEN stock_gudang.stock IS NULL THEN 0 ELSE stock_gudang.stock END) AS stock_gudang')
                             )
+                    ->when($request->product_type, function ($query) use ($request) {
+                        $query->where('product.product_type', '=',$request->product_type);
+                    })
                     ->where('product.is_active',1);
+
+        $now = date('Y-m-d H:i:s');
+        $products = $products->addSelect(DB::raw("'$now' as now"));
+
 
         if($request->product_sorting==1){
             $products = $products->orderBy('product.name','asc')
+                                 ->get();
+        }else if($request->product_sorting==2){
+            $products = $products->orderBy('product.id','desc')
+                                 ->get();
+        }else if($request->product_sorting==3){
+            $products = $products->orderBy('product_stock.stock','desc')
                                  ->get();
         }else{
             $products = $products->where('product.product_type',1)
@@ -56,6 +69,7 @@ class ProductQuery
         }
         return $products;
     }
+
     public function product_stok_store_stok_not_null_get($request)
     {
         $products = DB::table('product')
@@ -180,6 +194,15 @@ class ProductQuery
                         'source'=>2
                     ]);
                 }
+                if($request->stock_store!=0 || $request->stock_store!=""){
+                    ProductStock::create([
+                        'product_id' => $product->id,
+                        'stock' => $requestData->stock_store,
+                        'unit'=> $requestData->sale_unit,
+                        'source'=>2
+                    ]);
+                }
+
                 $suppliers = $request->supplier;
                 foreach($suppliers as $s){
                     $supplier_id = $s["supplier_id"];
@@ -273,6 +296,35 @@ class ProductQuery
                             'product_id' => $id
                         ]);
                     }
+                    $stock_gudang = $request->stock_gudang;
+                    $stock_store = $request->stock;
+                    if($stock_gudang!='' || $stock_gudang!='0'){
+                        $stockData = [
+                            'product_id'      => $id,
+                            'source'          => 2,
+                            'stock'           => $stock_gudang,
+                            'unit'            => $request->sale_unit,
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $id,
+                            'source' => 2,
+                        ],$stockData);
+                    };
+
+                    if($stock_store!='' || $stock_store!='0'){
+                        $stockDataStore = [
+                            'product_id'      => $id,
+                            'source'          => 1,
+                            'stock'           => $stock_store,
+                            'unit'            => $request->sale_unit,
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $id,
+                            'source' => 1,
+                        ],$stockDataStore);
+                    }
                 DB::commit();
             }catch (\PDOException $e) {
                 DB::rollBack();
@@ -302,6 +354,36 @@ class ProductQuery
                             'product_id' => $id
                         ]);
                     }
+                    $stock_gudang = $request->stock_gudang;
+                    $stock_store = $request->stock;
+                    if($stock_gudang!='' || $stock_gudang!='0'){
+                        $stockData = [
+                            'product_id'      => $id,
+                            'source'          => 2,
+                            'stock'           => $stock_gudang,
+                            'unit'            => $request->sale_unit,
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $id,
+                            'source' => 2,
+                        ],$stockData);
+                    };
+
+                    if($stock_store!='' || $stock_store!='0'){
+                        $stockDataStore = [
+                            'product_id'      => $id,
+                            'source'          => 1,
+                            'stock'           => $stock_store,
+                            'unit'            => $request->sale_unit,
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $id,
+                            'source' => 1,
+                        ],$stockDataStore);
+                    }
+
                 DB::commit();
             }catch (\PDOException $e) {
                 DB::rollBack();
