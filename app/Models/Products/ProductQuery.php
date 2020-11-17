@@ -199,7 +199,7 @@ class ProductQuery
                         'product_id' => $product->id,
                         'stock' => $requestData->stock_store,
                         'unit'=> $requestData->sale_unit,
-                        'source'=>2
+                        'source'=>1
                     ]);
                 }
 
@@ -239,6 +239,24 @@ class ProductQuery
                             'ref_code' => "STOCK_AWAL",
                         ]);
                     }
+
+                    if($request->stock_store!=0 || $request->stock_store!=""){
+                        ProductStock::insert([
+                            'product_id' => $product->id,
+                            'stock' => $request->stock_store,
+                            'unit'=> $request->sale_unit,
+                            'source'=>1
+                        ]);
+                        ProductStockHistory::insert([
+                            'date' => date('Y-m-d H:i:s'),
+                            'product_id'=>$product->id,
+                            'unit'  => $request->sale_unit,
+                            'quantity' => $request->stock_store,
+                            'source' => 1,
+                            'ref_code' => "STOCK_AWAL",
+                        ]);
+                    }
+
                     $suppliers = $request->supplier;
                     foreach($suppliers as $s){
                         $supplier_id = $s["supplier_id"];
