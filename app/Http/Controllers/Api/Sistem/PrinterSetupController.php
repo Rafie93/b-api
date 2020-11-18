@@ -36,6 +36,7 @@ class PrinterSetupController extends Controller
     {
         $dataStore = [
             'user_id'      => $this->user->id,
+            'connector' => $request->connector,
             'type'          => $request->type_printer==null ? 'USB' : $request->type_printer,
             'ip_address'           => $request->ip_address,
             'port'            => $request->port,
