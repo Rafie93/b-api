@@ -61,7 +61,9 @@ class PrinterSetupController extends Controller
         $ip = $printer->ip_address; // IP Komputer kita atau printer lain yang masih satu jaringan
         $printer = $printer->printer_name; // Nama Printer yang di sharing
 
-        $connector = new WindowsPrintConnector("smb://" . $ip . "/" . $printer);
+        // $connector = new WindowsPrintConnector("smb://" . $ip . "/" . $printer);
+        $connector = new NetworkPrintConnector($ip, 9100);
+
         $printer = new Printer($connector);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("BAHTERA MART \n");
