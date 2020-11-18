@@ -29,6 +29,7 @@ Route::post('rates', 'Api\Transaction\RateShippingController@rate_check');
 Route::get('voucher', 'Api\Sistem\VoucherController@index');
 Route::get('voucher/check', 'Api\Sistem\VoucherController@checkVoucher');
 Route::get('kategori', 'Api\Products\CategoryController@list_parent');
+Route::get('transaksi/cloud_data', 'Api\Sales\SalesController\cloud_data');
 
 
  //END API FOR MOBILE ANDROID TANPA LOGIN
@@ -42,7 +43,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('warehouse/dashboard', 'Api\Dashboard\DashboardWarehouseController@index');
     Route::get('keuangan/dashboard', 'Api\Dashboard\DashboardKeuanganController@index');
     Route::get('cs/dashboard', 'Api\Dashboard\DashboardCsController@index');
-
+    Route::get('kasir/dashboard', 'Api\Dashboard\DashboardKasirController@index');
 
     /*Endpoind Route Kategori
     */

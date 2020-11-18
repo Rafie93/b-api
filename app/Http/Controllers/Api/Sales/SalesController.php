@@ -24,6 +24,15 @@ class SalesController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
+    public function cloud_data()
+    {
+       $count =  Sale::where('network',1)->get()->count();
+       return response()->json([
+        'success' => true,
+        'data' => $count
+       ],200);
+    }
+
     public function index(Request $request)
     {
         $list = Sale::orderBy('id','desc')
