@@ -30,6 +30,7 @@ Route::get('voucher', 'Api\Sistem\VoucherController@index');
 Route::get('voucher/check', 'Api\Sistem\VoucherController@checkVoucher');
 Route::get('kategori', 'Api\Products\CategoryController@list_parent');
 Route::get('transaksi/cloud_data', 'Api\Sistem\SinkronisasiDataController@count_sales_data');
+Route::get('transaksi/data_transaksi', 'Api\Sistem\SinkronisasiDataController@data_transaksi');
 
 
  //END API FOR MOBILE ANDROID TANPA LOGIN
@@ -44,6 +45,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('keuangan/dashboard', 'Api\Dashboard\DashboardKeuanganController@index');
     Route::get('cs/dashboard', 'Api\Dashboard\DashboardCsController@index');
     Route::get('kasir/dashboard', 'Api\Dashboard\DashboardKasirController@index');
+    Route::get('transaksi/tarik', 'Api\Dashboard\DashboardKasirController@tarik_transaksi');
 
     /*Endpoind Route Kategori
     */
