@@ -22,4 +22,5 @@ Route::get('purchase/purchase-pdf/{id}', 'PurchaseController@pdf');
 Route::get('purchase/arrival/{id}', 'PurchaseController@arrifal_pdf');
 
 Route::get('pos/struk/{id}', 'StrukController@pdf');
+Route::get('pos/struk2/{id}', 'StrukController@struk');
 
