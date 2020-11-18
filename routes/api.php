@@ -29,7 +29,7 @@ Route::post('rates', 'Api\Transaction\RateShippingController@rate_check');
 Route::get('voucher', 'Api\Sistem\VoucherController@index');
 Route::get('voucher/check', 'Api\Sistem\VoucherController@checkVoucher');
 Route::get('kategori', 'Api\Products\CategoryController@list_parent');
-Route::get('transaksi/cloud_data', 'Api\Sales\SalesController\cloud_data');
+Route::get('transaksi/cloud_data', 'Api\Sales\SalesController@cloud_data');
 
 
  //END API FOR MOBILE ANDROID TANPA LOGIN
