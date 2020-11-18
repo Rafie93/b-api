@@ -140,6 +140,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('users/store','Api\Sistem\UserController@store');
     Route::post('users/update/{id}','Api\Sistem\UserController@update');
     Route::post('users/delete/{id}','Api\Sistem\UserController@delete');
+    Route::post('sistem/createprinter','Api\Sistem\PrinterSetupController@create_printer');
+    Route::get('sistem/getprinter', 'Api\Sistem\PrinterSetupController@index');
+    Route::get('struk/cetak/{id}', 'Api\Sistem\PrinterSetupController@struk');
 
     /* Stock Route */
     Route::get('stock/ready/{id}', 'Api\Stock\StockController@ready');
