@@ -12,6 +12,7 @@ use App\Models\Sales\Sale;
 use App\Models\Sales\SaleDetail;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 
 class PrinterSetupController extends Controller
 {
