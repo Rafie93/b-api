@@ -9,6 +9,7 @@ use App\Models\Sales\SaleDetail;
 use Illuminate\Support\Facades\DB;
 use App\Models\Products\Product;
 use App\Models\Products\ProductStock;
+use App\User;
 
 class SinkronisasiDataController extends Controller
 {
@@ -105,6 +106,11 @@ class SinkronisasiDataController extends Controller
 
     public function upload_transaksi(Request $request)
     {
+        $userData = User::where('username',$request->creator_username)->where('role_id',3)->get();
+        $userId = $request->creator_id;
+        if($userData->count() > 0){
+            $userId = $userData->first()->id;
+        }
 
         $dataStore = [
             'code'=> $request->code,
@@ -122,7 +128,7 @@ class SinkronisasiDataController extends Controller
             'payment_channel'=> $request->payment_channel,
             'no_kartu'=> $request->no_kartu,
             'coupon'=> $request->coupon,
-            'creator_id'=> $request->creator_id,
+            'creator_id'=> $userId,
             'transaction_by'=> $request->transaction_by,
             'jarak'=> $request->jarak,
             'address'=> $request->address,
