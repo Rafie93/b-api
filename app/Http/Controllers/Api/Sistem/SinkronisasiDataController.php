@@ -141,7 +141,7 @@ class SinkronisasiDataController extends Controller
 
         }else{
             $sales = Sale::create($dataStore);
-            $detail_sales = json_decode($request->product_detail,true);
+            $detail_sales = $request->product_detail;
 
             for($j=0;$j<count($detail_sales);$j++){
                 $dataDetail = [
