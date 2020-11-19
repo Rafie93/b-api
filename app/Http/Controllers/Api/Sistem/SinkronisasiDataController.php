@@ -106,11 +106,11 @@ class SinkronisasiDataController extends Controller
 
     public function upload_transaksi(Request $request)
     {
-        $userData = User::where('username',$request->creator_username)->where('role_id',3)->get();
+        // $userData = User::where('username',$request->creator_username)->where('role_id',3)->get();
         $userId = $request->creator_id;
-        if($userData->count() > 0){
-            $userId = $userData->first()->id;
-        }
+        // if($userData->count() > 0){
+        //     $userId = $userData->first()->id;
+        // }
 
         $dataStore = [
             'code'=> $request->code,
