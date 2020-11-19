@@ -22,11 +22,16 @@ class StockController extends Controller
             $source="1";
         }
 
-       $stock = ProductStock::orderBy('stock','asc')
-                            ->where('source',$source)->get();
+    $stock = DB::table('product_stock as s')
+        ->join('product as p', 'p.id', '=', 's.product_id')
+        ->where('s.source',$source)
+        ->get();
+    //    $stock = ProductStock::orderBy('stock','asc')
+    //                         ->where('source',$source)->get();
+
        return response()->json([
         'success' => true,
-        'stocks' =>  new StockResource($stock)
+        'stocks' =>  $stock
        ],200);
     }
 
