@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Products\Product;
 use App\Models\Products\ProductStock;
 use App\User;
+use App\Models\Products\ProductStockHistory;
 
 class SinkronisasiDataController extends Controller
 {
@@ -157,9 +158,12 @@ class SinkronisasiDataController extends Controller
                             'keterangan' => $detail_sales[$j]['keterangan'],
                         ];
                         DB::table('sale_detail')->updateOrInsert([
-                        'sale_id' => $sales->id,
-                        'product_id' =>$detail_sales[$j]['product_id']
-                    ],$dataDetail);
+                            'sale_id' => $sales->id,
+                            'product_id' =>$detail_sales[$j]['product_id']
+                        ],$dataDetail);
+
+                        $this->pengurangan_stock($detail_sales[$j]['product_id'],$detail_sales[$j]['quantity'],'Pcs',$request->code);
+
                     }
                 DB::commit();
                 return response()->json([
@@ -175,5 +179,24 @@ class SinkronisasiDataController extends Controller
             }
         }
 
+    }
+
+    public function pengurangan_stock($product_id,$quantity,$unit,$code)
+    {
+        $ps = ProductStock::where('product_id',$product_id)
+                    ->where('source',1)
+                    ->first();
+        $stock_sekarang = $ps->stock;
+        $ps->update([
+            'stock' => $stock_sekarang - $quantity
+        ]);
+        ProductStockHistory::insert([
+            'date' => date('Y-m-d H:i:s'),
+            'product_id' => $product_id,
+            'quantity' => 0 - $quantity,
+            'unit' => $unit,
+            'source' => 1,
+            'ref_code' => $code
+        ]);
     }
 }
