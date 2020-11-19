@@ -30,6 +30,9 @@ Route::get('voucher', 'Api\Sistem\VoucherController@index');
 Route::get('voucher/check', 'Api\Sistem\VoucherController@checkVoucher');
 Route::get('kategori', 'Api\Products\CategoryController@list_parent');
 Route::get('transaksi/cloud_data', 'Api\Sistem\SinkronisasiDataController@count_sales_data');
+Route::get('count/product', 'Api\Sistem\SinkronisasiDataController@count_product_data');
+Route::get('count/stock', 'Api\Sistem\SinkronisasiDataController@count_stock_data');
+
 Route::get('transaksi/data_transaksi', 'Api\Sistem\SinkronisasiDataController@data_transaksi');
 Route::get('transaksi/data_product', 'Api\Sistem\SinkronisasiDataController@data_product');
 
@@ -50,6 +53,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('kasir/dashboard', 'Api\Dashboard\DashboardKasirController@index');
     Route::get('transaksi/tarik', 'Api\Dashboard\DashboardKasirController@tarik_transaksi');
     Route::post('transaksi/upload', 'Api\Dashboard\DashboardKasirController@upload_transaksi');
+    Route::get('tarik/product', 'Api\Dashboard\DashboardKasirController@tarik_product');
 
     /*Endpoind Route Kategori
     */

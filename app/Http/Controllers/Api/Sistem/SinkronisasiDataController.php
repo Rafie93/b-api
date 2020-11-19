@@ -7,12 +7,32 @@ use Illuminate\Http\Request;
 use App\Models\Sales\Sale;
 use App\Models\Sales\SaleDetail;
 use Illuminate\Support\Facades\DB;
+use App\Models\Products\Product;
+use App\Models\Products\ProductStock;
 
 class SinkronisasiDataController extends Controller
 {
     public function count_sales_data()
     {
        $count =  Sale::where('network',1)->get()->count();
+       return response()->json([
+        'success' => true,
+        'total' => $count
+       ],200);
+    }
+
+    public function count_product_data()
+    {
+       $count =  Product::where('is_active',1)->get()->count();
+       return response()->json([
+        'success' => true,
+        'total' => $count
+       ],200);
+    }
+
+    public function count_stock_data() // stock store
+    {
+       $count =  ProductStock::where('source',1)->get()->count();
        return response()->json([
         'success' => true,
         'total' => $count
