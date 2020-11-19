@@ -52,7 +52,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('cs/dashboard', 'Api\Dashboard\DashboardCsController@index');
     Route::get('kasir/dashboard', 'Api\Dashboard\DashboardKasirController@index');
     Route::get('transaksi/tarik', 'Api\Dashboard\DashboardKasirController@tarik_transaksi');
-    Route::post('transaksi/upload', 'Api\Dashboard\DashboardKasirController@upload_transaksi');
+    Route::get('transaksi/upload', 'Api\Dashboard\DashboardKasirController@upload_transaksi');
     Route::get('tarik/product', 'Api\Dashboard\DashboardKasirController@tarik_product');
 
     /*Endpoind Route Kategori

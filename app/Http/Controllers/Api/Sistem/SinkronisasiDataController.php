@@ -140,32 +140,40 @@ class SinkronisasiDataController extends Controller
         if($transaksi>0){
 
         }else{
-            $sales = Sale::create($dataStore);
-            $detail_sales = $request->product_detail;
+            try{
+                DB::beginTransaction();
+                    $sales = Sale::create($dataStore);
+                    $detail_sales = $request->product_detail;
 
-            for($j=0;$j<count($detail_sales);$j++){
-                $dataDetail = [
-                    'sale_id' => $sales->id,
-                    'product_id' => $detail_sales[$j]['product_id'],
-                    'price_product' => $detail_sales[$j]['price_product'],
-                    'price_sale' => $detail_sales[$j]['price_sale'],
-                    'quantity' => $detail_sales[$j]['quantity'],
-                    'status' => $detail_sales[$j]['status'],
-                    'type' => $detail_sales[$j]['type'],
-                    'keterangan' => $detail_sales[$j]['keterangan'],
-                ];
-                DB::table('sale_detail')->updateOrInsert([
-                  'sale_id' => $sales->id,
-                  'product_id' =>$detail_sales[$j]['product_id']
-               ],$dataDetail);
+                    for($j=0;$j<count($detail_sales);$j++){
+                        $dataDetail = [
+                            'sale_id' => $sales->id,
+                            'product_id' => $detail_sales[$j]['product_id'],
+                            'price_product' => $detail_sales[$j]['price_product'],
+                            'price_sale' => $detail_sales[$j]['price_sale'],
+                            'quantity' => $detail_sales[$j]['quantity'],
+                            'status' => $detail_sales[$j]['status'],
+                            'type' => $detail_sales[$j]['type'],
+                            'keterangan' => $detail_sales[$j]['keterangan'],
+                        ];
+                        DB::table('sale_detail')->updateOrInsert([
+                        'sale_id' => $sales->id,
+                        'product_id' =>$detail_sales[$j]['product_id']
+                    ],$dataDetail);
+                    }
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'code' => $request->code
+                ],200);
+            }catch (\PDOException $e) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'code' => $request->code
+                ],200);
             }
-
         }
 
-
-        return response()->json([
-            'success' => true,
-            'code' => $request->code
-        ],200);
     }
 }

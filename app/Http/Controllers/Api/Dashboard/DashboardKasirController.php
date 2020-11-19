@@ -124,7 +124,9 @@ class DashboardKasirController extends Controller
             $formData = json_encode($data);
 
             $client = new \GuzzleHttp\Client();
-            $response = $client->request('POST', 'http://api.bahteramart.id/api/transaksi/upload_transaksi',[
+            $url = 'http://api.bahteramart.id/api/transaksi/upload_transaksi';
+            $urlLocal = 'http://localhost/bahtera-mart/bahtera-api/public/api/transaksi/upload_transaksi';
+            $response = $client->request('POST', $url,[
                 'body' => $formData,
                 'headers' => [
                     'Content-Type'     => 'application/json',
@@ -191,24 +193,31 @@ class DashboardKasirController extends Controller
             if($check > 0){
 
             }else{
-              $sales =  Sale::create($dataStore);
-              $detail_sales = $detail_product;
-              for($j=0;$j<count($detail_sales);$j++){
-                  $dataDetail = [
-                      'sale_id' => $sales->id,
-                      'product_id' => $detail_sales[$j]['product_id'],
-                      'price_product' => $detail_sales[$j]['price_product'],
-                      'price_sale' => $detail_sales[$j]['price_sale'],
-                      'quantity' => $detail_sales[$j]['quantity'],
-                      'status' => $detail_sales[$j]['status'],
-                      'type' => $detail_sales[$j]['type'],
-                      'keterangan' => $detail_sales[$j]['keterangan'],
-                  ];
-                  DB::table('sale_detail')->updateOrInsert([
-                    'sale_id' => $sales->id,
-                    'product_id' =>$detail_sales[$j]['product_id']
-                 ],$dataDetail);
-              }
+                try{
+                    DB::beginTransaction();
+                    $sales =  Sale::create($dataStore);
+                    $detail_sales = $detail_product;
+                    for($j=0;$j<count($detail_sales);$j++){
+                        $dataDetail = [
+                            'sale_id' => $sales->id,
+                            'product_id' => $detail_sales[$j]['product_id'],
+                            'price_product' => $detail_sales[$j]['price_product'],
+                            'price_sale' => $detail_sales[$j]['price_sale'],
+                            'quantity' => $detail_sales[$j]['quantity'],
+                            'status' => $detail_sales[$j]['status'],
+                            'type' => $detail_sales[$j]['type'],
+                            'keterangan' => $detail_sales[$j]['keterangan'],
+                        ];
+                        DB::table('sale_detail')->updateOrInsert([
+                          'sale_id' => $sales->id,
+                          'product_id' =>$detail_sales[$j]['product_id']
+                       ],$dataDetail);
+                    }
+                    DB::commit();
+                }catch (\PDOException $e) {
+                    DB::rollBack();
+                }
+
 
             }
         }
