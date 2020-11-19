@@ -17,13 +17,13 @@ class CategoryItem extends JsonResource
         $parent_id = $this->resource->parent_id;
         if($parent_id==null){
             return  [
-                'value'        => $this->resource->id,
+                'value'        => strval($this->resource->id),
                 'label'      => $this->resource->name,
                 'image'      => $this->resource->image(),
             ];
         }else{
             return  [
-                'value'        => $this->resource->id,
+                'value'        => strval($this->resource->id),
                 'id'        => $this->resource->id,
                 'id_parent' => $this->resource->parent_id,
                 'label'      => $this->resource->name,
