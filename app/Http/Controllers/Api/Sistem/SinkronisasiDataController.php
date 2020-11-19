@@ -106,11 +106,11 @@ class SinkronisasiDataController extends Controller
 
     public function upload_transaksi(Request $request)
     {
-        // $userData = User::where('username',$request->creator_username)->where('role_id',3)->get();
+        $userData = User::where('username',$request->creator_username)->where('role_id',3)->get();
         $userId = $request->creator_id;
-        // if($userData->count() > 0){
-        //     $userId = $userData->first()->id;
-        // }
+        if($userData->count() > 0){
+            $userId = $userData->first()->id;
+        }
 
         $dataStore = [
             'code'=> $request->code,
@@ -133,13 +133,36 @@ class SinkronisasiDataController extends Controller
             'jarak'=> $request->jarak,
             'address'=> $request->address,
             'network'=> $request->network,
+            'date_complete' => date('Y-m-d H:i:s'),
             'created_at' => date('Y-m-d H:i:s')
         ];
+        $transaksi = Sale::where('code',$request->code)->get()->count();
+        if($transaksi>0){
 
-        $penjualan = DB::table('sale')->updateOrInsert([
-            'code' => $request->code
-        ],
-        $dataStore);
+        }else{
+            $sales = DB::table('sale')->updateOrInsert([
+                'code' => $request->code
+            ],$dataStore);
+            $detail_sales = $request->product_detail;
+            for($j=0;$j<count($detail_sales);$j++){
+                $dataDetail = [
+                    'sale_id' => $sales->id,
+                    'product_id' => $detail_sales[$j]['product_id'],
+                    'price_product' => $detail_sales[$j]['price_product'],
+                    'price_sale' => $detail_sales[$j]['price_sale'],
+                    'quantity' => $detail_sales[$j]['quantity'],
+                    'status' => $detail_sales[$j]['status'],
+                    'type' => $detail_sales[$j]['type'],
+                    'keterangan' => $detail_sales[$j]['keterangan'],
+                ];
+                DB::table('sale_detail')->updateOrInsert([
+                  'sale_id' => $sales->id,
+                  'product_id' =>$detail_sales[$j]['product_id']
+               ],$dataDetail);
+            }
+
+        }
+
 
         return response()->json([
             'success' => true,
