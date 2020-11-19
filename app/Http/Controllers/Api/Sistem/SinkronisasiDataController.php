@@ -140,10 +140,9 @@ class SinkronisasiDataController extends Controller
         if($transaksi>0){
 
         }else{
-            $sales = DB::table('sale')->updateOrInsert([
-                'code' => $request->code
-            ],$dataStore);
-            $detail_sales = $request->product_detail;
+            $sales = Sale::create($dataStore);
+            $detail_sales = json_decode($request->product_detail,true);
+
             for($j=0;$j<count($detail_sales);$j++){
                 $dataDetail = [
                     'sale_id' => $sales->id,
