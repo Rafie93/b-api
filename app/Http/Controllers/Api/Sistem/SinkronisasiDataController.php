@@ -68,7 +68,7 @@ class SinkronisasiDataController extends Controller
                     })
 
                     ->leftJoin('category', 'product.category_id', '=', 'category.id')
-                    ->select('product.id','product.sku','product.barcode','product.name',
+                    ->select('product.id','product.sku','product.barcode','product.name','product.category_id','product.creator_id',
                             'product.alert_quantity','category.name as category','product.sale_unit','product.purchase_unit','product.converse_unit',
                             'product.brand','product.price','product.price_modal','product.product_type','product.price_type','product.price_type_in',
                             'product.thumbnail','product.price_promo','product.start_promotion','end_promotion',
