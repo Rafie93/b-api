@@ -28,7 +28,7 @@ class PurchaseItem extends JsonResource
                 'quantity_received' => $d->quantity_received,
                 'expired_date' => $d->exp_date,
                 'unit'  => $d->unit,
-                'status_barang'  => $d->status,
+                'status_barang'  => intval($d->status),
                 'notes' => $d->notes
             );
         }
