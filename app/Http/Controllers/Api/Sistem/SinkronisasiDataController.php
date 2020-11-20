@@ -185,11 +185,24 @@ class SinkronisasiDataController extends Controller
     {
         $ps = ProductStock::where('product_id',$product_id)
                     ->where('source',1)
-                    ->first();
-        $stock_sekarang = $ps->stock;
-        $ps->update([
-            'stock' => $stock_sekarang - $quantity
-        ]);
+                    ->get();
+        if($ps->count() > 0){
+            $ps = $ps->first();
+            $stock_sekarang = $ps->stock;
+            $ps->update([
+                'stock' => $stock_sekarang - $quantity
+            ]);
+
+        }else{
+            $newStock = 0 - $quantity;
+            ProductStock::create([
+                'product_id' => $product_id,
+                'stock' => $newStock,
+                'unit' => $unit,
+                'source' => 1
+            ]);
+        }
+
         ProductStockHistory::insert([
             'date' => date('Y-m-d H:i:s'),
             'product_id' => $product_id,
