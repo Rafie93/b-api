@@ -273,8 +273,8 @@ class PaketProductController extends Controller
                     }
                     $foto = $request->file('file');
                     $fileName = $foto->getClientOriginalName();
-                    $request->file('file')->move('images/product/'.$product->id,$fileName);
-                    $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
+                    $request->file('file')->move('images/product/'.$productId,$fileName);
+                    $fotoUpdate = Product::where('id',$productId)->update(['thumbnail' => $fileName]);
 
                 DB::commit();
                 return response()->json([
@@ -285,7 +285,7 @@ class PaketProductController extends Controller
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
-                    'message' =>  "Gagal membuat paket produk"
+                    'message' =>  "Gagal memperbaharui paket produk"
                 ],400);
             }
 
@@ -358,7 +358,7 @@ class PaketProductController extends Controller
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
-                    'message' =>  "Gagal membuat paket produk"
+                    'message' =>  "Gagal memperbaharui paket produk : ".$e
                 ],400);
             }
         }
