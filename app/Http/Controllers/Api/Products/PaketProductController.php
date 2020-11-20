@@ -39,13 +39,13 @@ class PaketProductController extends Controller
                         ProductStock::insert([
                             'product_id' => $product->id,
                             'stock' => $request->stock,
-                            'unit'=> $request->purchase_unit,
+                            'unit'=> 'PAKET',
                             'source'=>1
                         ]);
                         ProductStockHistory::insert([
                             'date' => date('Y-m-d H:i:s'),
                             'product_id'=>$product->id,
-                            'unit'  => $request->purchase_unit,
+                            'unit'  => 'PAKET',
                             'quantity' => $request->stock,
                             'source' => 1,
                             'ref_code' => "STOCK_AWAL",
@@ -103,13 +103,13 @@ class PaketProductController extends Controller
                         ProductStock::insert([
                             'product_id' => $product->id,
                             'stock' => $request->stock,
-                            'unit'=> $request->purchase_unit,
+                            'unit'=> 'PAKET',
                             'source'=>1
                         ]);
                         ProductStockHistory::insert([
                             'date' => date('Y-m-d H:i:s'),
                             'product_id'=>$product->id,
-                            'unit'  => $request->purchase_unit,
+                            'unit'  => 'PAKET',
                             'quantity' => $request->stock,
                             'source' => 1,
                             'ref_code' => "STOCK_AWAL",
@@ -207,6 +207,164 @@ class PaketProductController extends Controller
 
 
     }
+
+    public function update(Request $request,$productId)
+    {
+        if ($request->hasFile('file')) {
+            $requestData = $request->data;
+            $someRequest = json_decode($requestData, true);
+            $category_id = $request->category_id;
+            if($category_id=="") $category_id = 2;
+
+            $request->merge($someRequest);
+            $request->merge(['product_type'=>2,'sku'=>$request->sku=="" ? $this->auto_sku($request->name) : $request->sku,
+                                'barcode_type'=>'128', 'creator_id' => $this->user->id,'category_id'=>$category_id
+                            ]);
+            try{
+                DB::beginTransaction();
+                    $product = Product::find($productId);
+                    $product->update($request->all());
+
+                    if($request->stock!=0 || $request->stock!=""){
+                        $stockDataStore = [
+                            'product_id'      => $productId,
+                            'source'          => 1,
+                            'stock'           => $request->stock,
+                            'unit'            => 'PAKET',
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $productId,
+                            'source' => 1,
+                        ],$stockDataStore);
+                    }
+
+                    $pakets = $request->paket;
+                    foreach($pakets as $s){
+                        $product_id = $s["product_id"];
+                        $quantity = $s["quantity"];
+
+                        $paketPromoDataStore = [
+                            'product_id'      => $product_id,
+                            'paket_product_id'       => $productId,
+                            'quantity'           => $quantity,
+                        ];
+
+                        DB::table('paket_promo_product_detail')->updateOrInsert([
+                            'product_id' => $product_id,
+                            'paket_product_id' => $productId,
+                            'source' => 1,
+                        ],$paketPromoDataStore);
+
+                        // PaketPromoDetail::create([
+                        //     'product_id'=>$product_id,
+                        //     'paket_product_id' => $product->id,
+                        //     'quantity' =>  $quantity
+                        // ]);
+
+                        // $invalid = $this->pengurangan_stock($product_id,$quantity,$request->stock,$product->id);
+                        // if($invalid){
+                        //     DB::rollBack();
+                        //     return response()->json([
+                        //         'success' => false,
+                        //         'message' =>  "Oopps, stok di toko tidak cukup untuk dijadikan stok promo"
+                        //     ],400);
+                        // }
+                    }
+                    $foto = $request->file('file');
+                    $fileName = $foto->getClientOriginalName();
+                    $request->file('file')->move('images/product/'.$product->id,$fileName);
+                    $fotoUpdate = Product::where('id',$product->id)->update(['thumbnail' => $fileName]);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'product' =>  $product
+                ],200);
+            }catch (\PDOException $e) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' =>  "Gagal membuat paket produk"
+                ],400);
+            }
+
+
+        }else{
+            $sku = $request->sku;
+            $category_id = $request->category_id;
+            if($sku=="") $sku = $this->auto_sku($request->name);
+            if($category_id=="") $category_id = 2;
+
+            $request->merge(['product_type'=>2,'sku'=>$sku,'barcode_type'=>'128','category_id'=>$category_id,'creator_id' => $this->user->id]);
+            try{
+                DB::beginTransaction();
+                    // $product = Product::create($request->all());
+                    $product = Product::find($productId);
+                    $product->update($request->all());
+
+
+                    if($request->stock!=0 || $request->stock!=""){
+                        $stockDataStore = [
+                            'product_id'      => $productId,
+                            'source'          => 1,
+                            'stock'           => $request->stock,
+                            'unit'            => 'PAKET',
+                            'created_at'       => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('product_stock')->updateOrInsert([
+                            'product_id' => $productId,
+                            'source' => 1,
+                        ],$stockDataStore);
+                    }
+
+                    $pakets = $request->paket;
+                    foreach($pakets as $s){
+                        $product_id = $s["product_id"];
+                        $quantity = $s["quantity"];
+
+                        $paketPromoDataStore = [
+                            'product_id'      => $product_id,
+                            'paket_product_id'       => $productId,
+                            'quantity'           => $quantity,
+                        ];
+
+                        DB::table('paket_promo_product_detail')->updateOrInsert([
+                            'product_id' => $product_id,
+                            'paket_product_id' => $productId,
+                            'source' => 1,
+                        ],$paketPromoDataStore);
+                        // PaketPromoDetail::create([
+                        //     'product_id'=>$product_id,
+                        //     'paket_product_id' => $product->id,
+                        //     'quantity' =>  $quantity
+                        // ]);
+                    // $invalid = $this->pengurangan_stock($product_id,$quantity,$request->stock,$product->id);
+                    // if($invalid){
+                    //     DB::rollBack();
+                    //     return response()->json([
+                    //         'success' => false,
+                    //         'message' =>  "Oopps, stok di toko tidak cukup untuk dijadikan stok promo"
+                    //     ],400);
+                    // }
+
+                    }
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'product' =>  $product
+                ],200);
+            }catch (\PDOException $e) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' =>  "Gagal membuat paket produk"
+                ],400);
+            }
+        }
+
+    }
+
 
     public function auto_sku($brand)
     {
