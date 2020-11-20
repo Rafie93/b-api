@@ -252,8 +252,7 @@ class PaketProductController extends Controller
 
                         DB::table('paket_promo_product_detail')->updateOrInsert([
                             'product_id' => $product_id,
-                            'paket_product_id' => $productId,
-                            'source' => 1,
+                            'paket_product_id' => $productId
                         ],$paketPromoDataStore);
 
                         // PaketPromoDetail::create([
@@ -331,8 +330,7 @@ class PaketProductController extends Controller
 
                         DB::table('paket_promo_product_detail')->updateOrInsert([
                             'product_id' => $product_id,
-                            'paket_product_id' => $productId,
-                            'source' => 1,
+                            'paket_product_id' => $productId
                         ],$paketPromoDataStore);
                         // PaketPromoDetail::create([
                         //     'product_id'=>$product_id,
