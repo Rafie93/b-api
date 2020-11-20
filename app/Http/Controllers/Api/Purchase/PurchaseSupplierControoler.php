@@ -66,25 +66,29 @@ class PurchaseSupplierControoler extends Controller
     {
         $product = SupplierProduct::select('supplier_product.supplier_id','supplier.name as supplier_name','supplier_product.product_id as product_id',
                                     'product.name as product_name','product.sale_unit',
-                                    'product.sku','product.barcode','product.price_modal')
+                                    'product.sku','product.barcode','product.price_modal'
+                                    )
                                     ->leftJoin('product','product.id','=','supplier_product.product_id')
                                     ->leftJoin('supplier','supplier.id','=','supplier_product.supplier_id')
                                     ->where('supplier_product.supplier_id',$supplier_id)
                                     ->get();
         $output = [];
         foreach ($product as $row){
-            $output[]= array(
-                'supplier_id' => $row->supplier_id,
-                'supplier_name' => $row->supplier_name,
-                'product_id' => $row->product_id,
-                'product_name' => $row->product_name,
-                'product_sku' => $row->sku,
-                'product_barcode' => $row->barcode,
-                'price' => $row->price_modal,
-                'unit' => $row->sale_unit,
-                'jumlah_kebutuhan' => $this->quantity_order($row->product_id),
+            $jumlah_kebutuhan = $this->quantity_order($row->product_id);
+            if($jumlah_kebutuhan >0){
+                $output[]= array(
+                    'supplier_id' => $row->supplier_id,
+                    'supplier_name' => $row->supplier_name,
+                    'product_id' => $row->product_id,
+                    'product_name' => $row->product_name,
+                    'product_sku' => $row->sku,
+                    'product_barcode' => $row->barcode,
+                    'price' => $row->price_modal,
+                    'unit' => $row->sale_unit,
+                    'jumlah_kebutuhan' => $jumlah_kebutuhan
+                );
+            }
 
-            );
         }
         return response()->json([
             'success' => true,
