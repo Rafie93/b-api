@@ -162,7 +162,9 @@ class SinkronisasiDataController extends Controller
                             'product_id' =>$detail_sales[$j]['product_id']
                         ],$dataDetail);
 
-                        $this->pengurangan_stock($detail_sales[$j]['product_id'],$detail_sales[$j]['quantity'],'Pcs',$request->code);
+                        $sale_unit = Product::where('id',$detail_sales[$j]['product_id'])->first()->sale_unit;
+
+                        $this->pengurangan_stock($detail_sales[$j]['product_id'],$detail_sales[$j]['quantity'],$sale_unit,$request->code);
 
                     }
                 DB::commit();
