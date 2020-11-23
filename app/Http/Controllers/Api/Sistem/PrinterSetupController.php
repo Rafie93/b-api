@@ -78,7 +78,7 @@ class PrinterSetupController extends Controller
         $printer->setPrintLeftMargin(0);
         $printer->text("----------------------------------------");
         foreach ($detail as $det) {
-            $printer->setPrintLeftMargin(256);
+            // $printer->setPrintLeftMargin(256);
             $subTotal = number_format($det->price_sale * $det->quantity);
             $priceProduk = number_format($det->price_sale);
             $textLeft = $det->quantity.' x '.$det->product->name;
@@ -92,14 +92,14 @@ class PrinterSetupController extends Controller
                 }
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
                 $printer->text($textLeft.' '.$priceProduk.' '.$subTotal. "\n");
-            }else if ($total > $maks){
+            }else{
                 $printer->setJustification(Printer::JUSTIFY_LEFT);
                 $printer->text($textLeft. "\n");
                 $printer->setJustification(Printer::JUSTIFY_RIGHT);
                 $printer->text($priceProduk.' '.$subTotal. "\n");
             }
-
         }
+        
         $printer->setPrintLeftMargin(0);
         $printer->text("----------------------------------------");
         $printer->text("\n");

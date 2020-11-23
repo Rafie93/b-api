@@ -156,6 +156,7 @@ class SinkronisasiDataController extends Controller
                             'status' => $detail_sales[$j]['status'],
                             'type' => $detail_sales[$j]['type'],
                             'keterangan' => $detail_sales[$j]['keterangan'],
+                            'created_at' => date('Y-m-d H:i:s')
                         ];
                         DB::table('sale_detail')->updateOrInsert([
                             'sale_id' => $sales->id,
