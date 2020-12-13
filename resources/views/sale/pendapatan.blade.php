@@ -58,20 +58,22 @@
         </tr>
         <tr colspan="9"></tr>
         <tr>
+            <td></td>
             <td style="background-color:#12a25d">Nama Barang</td>
             <td style="background-color:#12a25d">Harga Modal</td>
             <td style="background-color:#12a25d">Harga Jual</td>
             <td style="background-color:#12a25d">Quantity</td>
-            <td style="background-color:#12a25d">Sub Total Modal</td>
-            <td style="background-color:#12a25d">Sub Total Jual</td>
+            <td style="background-color:#12a25d">Total Modal</td>
+            <td style="background-color:#12a25d">Total Jual</td>
         </tr>
             @foreach ($detail as $key => $det)
                 <tr>
+                    <td></td>
                     <td style="background-color:#74ddaa">{{$det->product->name}}</td>
                     <td style="background-color:#74ddaa">{{$det->price_product}}</td>
                     <td style="background-color:#74ddaa">{{$det->price_sale}}</td>
                     <td style="background-color:#74ddaa">{{$det->quantity}}</td>
-                    <td style="background-color:#74ddaa">{{$det->price_sale * $det->price_product}}</td>
+                    <td style="background-color:#74ddaa">{{$det->quantity * $det->price_product}}</td>
                     <td style="background-color:#74ddaa">{{$det->price_sale * $det->quantity}}</td>
                 </tr>
             @endforeach
@@ -85,16 +87,16 @@
             $total_colspan = 4 + $cols_add;
         @endphp
         <tr>
-            <td align="right" colspan="{{$total_colspan}}"> Total Penjualan</td>
-            <td align="right">{{number_format($grand_total)}}</td>
+            <td align="right" colspan="{{$total_colspan}}"><strong> Total Penjualan </strong></td>
+            <td align="right"><strong>{{number_format($grand_total)}}</strong></td>
         </tr>
         <tr>
-            <td align="right" colspan="{{$total_colspan}}"> Total Modal</td>
-            <td align="right">{{number_format($total_product)}}</td>
+            <td align="right" colspan="{{$total_colspan}}"><strong> Total Modal</strong></td>
+            <td align="right"><strong>{{number_format($total_product)}}</strong></td>
         </tr>
         <tr>
-            <td align="right" colspan="{{$total_colspan}}"> Total Bersih</td>
-            <td align="right">{{number_format($grand_total - $total_product)}}</td>
+            <td align="right" colspan="{{$total_colspan}}"><strong> Total Bersih </strong></td>
+            <td align="right"><strong>{{number_format($grand_total - $total_product)}}</strong></td>
         </tr>
     </tfoot>
 </table>
