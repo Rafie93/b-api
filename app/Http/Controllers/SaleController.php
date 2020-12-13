@@ -14,6 +14,7 @@ use App\Exports\PendapatanReport;
 use App\Exports\PendapatanTotalReport;
 use App\Exports\ProductSoldReport;
 use App\Exports\ProductSumReport;
+use App\Exports\SaleShiftReport;
 
 class SaleController extends Controller
 {
@@ -60,7 +61,17 @@ class SaleController extends Controller
         $date_end = $request->date_end;
         $type = $request->type;
         return Excel::download(new ProductSumReport($date_start,$date_end,$type), 'product_terjual.xlsx');
+    }
+
+    public function shift_penjualan(Request $request)
+    {
+        $date = $request->date;
+        $shift = $request->shift;
+        $rinci = $request->rinci;
+        $kasir = $request->kasir;
+        return Excel::download(new SaleShiftReport($date,$shift,$rinci,$kasir), 'shift-penjualan-'.$date.'-'.$shift.'-.xlsx');
 
     }
+
 
 }

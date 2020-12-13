@@ -37,6 +37,6 @@ Route::get('stock/excel', 'StockController@excel');
 Route::get('stock_history/excel', 'StockController@history_excel');
 
 Route::get('product_terjual/excel', 'SaleController@product_terjual');
-
+Route::get('sale_shift/excel', 'SaleController@shift_penjualan');
 
 
