@@ -430,6 +430,11 @@ class ProductQuery
         $image = ProductImage::where('product_id',$id)->get();
     }
 
+    public function history_product($source,$productId)
+    {
+        return ProductStockHistory::orderBy('id','asc')->where('source',$source)->where('product_id',$productId)->get();
+    }
+
       // public function product_update($request,$id)
     // {
     //     $sku = $request->sku;

@@ -167,6 +167,8 @@ return [
          */
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -232,7 +234,9 @@ return [
         'FCM'      => LaravelFCM\Facades\FCM::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'FCM'      => LaravelFCM\Facades\FCM::class,
-    	'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
+        'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
 
     ],
 

@@ -144,4 +144,13 @@ class UserController extends Controller
                ],400);
         }
     }
+
+    public function kasir(Request $request)
+    {
+        $users = User::where('role_id',3)->where('is_active',1)->where('group',1)->get();
+        return response()->json([
+            'success' => true,
+            'users' =>  new UserResource($users)
+           ],200);
+    }
 }

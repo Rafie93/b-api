@@ -7,6 +7,9 @@ use PDF;
 use Carbon\Carbon;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderDetail;
+use App\Exports\ProductOutGudangReport;
+use Excel;
+use App\Exports\ProductInStoreReport;
 
 class OrderController extends Controller
 {
@@ -31,5 +34,20 @@ class OrderController extends Controller
                                 ->loadView('order.pdf', compact('order','type'))
                                 ->setPaper('a4','portrait');
         return $pdf->stream($id.'.e-surat.pdf');
+    }
+
+    public function excel(Request $request)
+    {
+        $date_start = $request->date_start;
+        $date_end = $request->date_end;
+        return Excel::download(new ProductOutGudangReport($date_start,$date_end), 'barang_keluar_gudang.xlsx');
+
+    }
+    public function product_in(Request $request)
+    {
+        $date_start = $request->date_start;
+        $date_end = $request->date_end;
+        return Excel::download(new ProductInStoreReport($date_start,$date_end), 'barang_masuk_store.xlsx');
+
     }
 }

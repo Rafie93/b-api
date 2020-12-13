@@ -11,4 +11,8 @@ class OrderQuery
     {
         return OrderDetail::where('order_product_id',$id)->get();
     }
+    public function getProductDetailDiterima($id)
+    {
+        return OrderDetail::where('order_product_id',$id)->where('status',5)->get();
+    }
 }

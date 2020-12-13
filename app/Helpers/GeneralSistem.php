@@ -119,4 +119,34 @@ function replaceDate($date)
 }
 
 
+function ganti_format_tgl_indo($tgl = "")
+{
+	$tanggal = explode("-", $tgl);
+	$tgl = $tanggal[2]." ".char_to_month($tanggal[1])." ".$tanggal[0];
+	return $tgl;
+}
+
+function char_to_month($month)
+{
+	switch ($month)
+	{
+		case "01" : return "Januari";
+		case "02" : return "Februari";
+		case "03" : return "Maret";
+		case "04" : return "April";
+		case "05" : return "Mei";
+		case "06" : return "Juni";
+		case "07" : return "Juli";
+		case "08" : return "Agustus";
+		case "09" : return "September";
+		case "10" : return "Oktober";
+		case "11" : return "Nopember";
+		case "12" : return "Desember";
+
+		default : return FALSE;
+	}
+}
+
+
+
 ?>

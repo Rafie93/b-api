@@ -14,6 +14,11 @@ class Sale extends Model
     "date_shipping","date_complete","no_kartu","network"
     ];
 
+    public function creator()
+    {
+        return $this->belongsTo('App\User','creator_id');
+    }
+
     public function customerName()
     {
         $cs = Customer::where('id',$this->customer_id)->get();

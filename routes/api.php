@@ -43,6 +43,8 @@ Route::post('transaksi/upload_transaksi', 'Api\Sistem\SinkronisasiDataController
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('user', 'Auth\UserController@getAuthenticatedUser');
+    Route::get('sale/excel', 'SaleController@exportExcel')->name('sale.excel');
+
 
     //Endpoint Dashboard
     Route::get('manager/dashboard', 'Api\Dashboard\DashboardManagerController@index');
@@ -100,6 +102,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('product/updateUploadGambar/{id}','Api\Products\ProductController@updateUploadGambar');
     Route::post('product/deleteGambar/{id}','Api\Products\ProductController@deleteGambar');
 
+    Route::get('product/promo/list', 'Api\Sales\PromoBelanjaController@index');
+    Route::get('product/promo/detail/{id}', 'Api\Sales\PromoBelanjaController@detail');
+    Route::post('product/promo/store','Api\Sales\PromoBelanjaController@store');
+    Route::post('product/promo/update/{id}','Api\Sales\PromoBelanjaController@update');
+    Route::post('product/promo/delete/{id}','Api\Sales\PromoBelanjaController@delete');
+
     /*Endpoind Route Order
     */
     Route::get('order/list', 'Api\Order\OrderController@index');
@@ -146,6 +154,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('supplier/detail/{id}','Api\Supplier\SupplierController@detail');
 
     /* Endpoint Route User */
+    Route::get('users/kasir', 'Api\Sistem\UserController@kasir');
     Route::get('users/list', 'Api\Sistem\UserController@index');
     Route::get('users/edit/{id}', 'Api\Sistem\UserController@edit');
     Route::post('users/store','Api\Sistem\UserController@store');
@@ -168,6 +177,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('sales/update_transaction/{id}', 'Api\Sales\SalesController@update_transaction');
     Route::get('sales/detail/{id}', 'Api\Sales\SalesController@detail');
     Route::post('sales/store', 'Api\Sales\SalesController@store');
+
+    Route::get('sales/check_promo', 'Api\Sales\PromoBelanjaController@checkPromo');
 
     /* Endpoint Route Add CUstomer */
     Route::get('customer/list','Api\Customer\CustomerController@index');
@@ -220,6 +231,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('inbox/product/comment/{id}', 'Api\Inbox\InboxController@detail');
     Route::get('inbox/product/list', 'Api\Inbox\InboxController@list');
     Route::post('inbox/product/store', 'Api\Inbox\InboxController@store');
+
+    //REPORT EXCEL
+    Route::get('sale/excel', 'SaleController@exportExcel');
+    Route::get('pendapatan/excel', 'SaleController@pendapatanExcel');
+    Route::get('total_pendapatan/excel', 'SaleController@pendapatanTotalExcel');
+    Route::get('barang_keluar/store/excel', 'SaleController@reportProductOut');
+    Route::get('barang_keluar/gudang/excel', 'OrderController@excel');
+    Route::get('pembelian/excel', 'PurchaseController@excel');
+    Route::get('barang_masuk/gudang/excel', 'PurchaseController@product_in');
+    Route::get('barang_masuk/store/excel', 'OrderController@product_in');
+
+    Route::get('stock/excel', 'StockController@excel');
+    Route::get('stock_history/excel', 'StockController@history_excel');
+
+    Route::get('product_terjual/excel', 'SaleController@product_terjual');
+    //END REPORT
 
 
 });
