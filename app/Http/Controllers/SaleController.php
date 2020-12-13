@@ -26,7 +26,7 @@ class SaleController extends Controller
         $kasir = $request->kasir;
         $rinci = $request->rinci;
 
-        return Excel::download(new SaleReport($date_start,$date_end,$payment_method,$kasir,$rinci), 'penjualan.xlsx');
+        return Excel::download(new SaleReport($date_start,$date_end,$payment_method,$kasir,$rinci), 'penjualan-'.$date_start.'.xlsx');
 
     }
     public function pendapatanExcel(Request $request)
@@ -35,7 +35,7 @@ class SaleController extends Controller
         $date_end = $request->date_end;
         $payment_method = $request->payment;
         $kasir = $request->kasir;
-        return Excel::download(new PendapatanReport($date_start,$date_end,$payment_method,$kasir), 'pendapatan.xlsx');
+        return Excel::download(new PendapatanReport($date_start,$date_end,$payment_method,$kasir), 'pendapatan-'.$date_start.'.xlsx');
     }
     public function pendapatanTotalExcel(Request $request)
     {
@@ -43,15 +43,14 @@ class SaleController extends Controller
         $date_end = $request->date_end;
         $type = $request->type;
         $kasir = $request->kasir;
-        return Excel::download(new PendapatanTotalReport($date_start,$date_end,$type,$kasir), 'total_pendapatan.xlsx');
+        return Excel::download(new PendapatanTotalReport($date_start,$date_end,$type,$kasir), 'total_pendapatan-'.$date_start.'-.xlsx');
     }
 
     public function reportProductOut(Request $request)
     {
         $date_start = $request->date_start;
         $date_end = $request->date_end;
-
-        return Excel::download(new ProductSoldReport($date_start,$date_end), 'barang_keluar_store.xlsx');
+        return Excel::download(new ProductSoldReport($date_start,$date_end), 'barang_keluar_store-'.$date_start.'-.xlsx');
 
     }
 
@@ -60,7 +59,7 @@ class SaleController extends Controller
         $date_start = $request->date_start;
         $date_end = $request->date_end;
         $type = $request->type;
-        return Excel::download(new ProductSumReport($date_start,$date_end,$type), 'product_terjual.xlsx');
+        return Excel::download(new ProductSumReport($date_start,$date_end,$type), 'product_terjual-'.$date_start.'-'.$type.'.xlsx');
     }
 
     public function shift_penjualan(Request $request)

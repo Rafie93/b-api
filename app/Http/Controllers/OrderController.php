@@ -40,14 +40,14 @@ class OrderController extends Controller
     {
         $date_start = $request->date_start;
         $date_end = $request->date_end;
-        return Excel::download(new ProductOutGudangReport($date_start,$date_end), 'barang_keluar_gudang.xlsx');
+        return Excel::download(new ProductOutGudangReport($date_start,$date_end), 'barang_keluar_gudang-'.$date_start.'.xlsx');
 
     }
     public function product_in(Request $request)
     {
         $date_start = $request->date_start;
         $date_end = $request->date_end;
-        return Excel::download(new ProductInStoreReport($date_start,$date_end), 'barang_masuk_store.xlsx');
+        return Excel::download(new ProductInStoreReport($date_start,$date_end), 'barang_masuk_store-'.$date_start.'.xlsx');
 
     }
 }

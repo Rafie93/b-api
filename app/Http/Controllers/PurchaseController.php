@@ -28,13 +28,13 @@ class PurchaseController extends Controller
         $date_start = $request->date_start;
         $date_end = $request->date_end;
         $rinci = $request->rinci;
-        return Excel::download(new PembelianReport($date_start,$date_end,$rinci), 'pembelian.xlsx');
+        return Excel::download(new PembelianReport($date_start,$date_end,$rinci), 'pembelian-'.$date_start.'.xlsx');
     }
     public function product_in(Request $request)
     {
         $date_start = $request->date_start;
         $date_end = $request->date_end;
-        return Excel::download(new ProductInGudangReport($date_start,$date_end), 'barang_masuk_gudang.xlsx');
+        return Excel::download(new ProductInGudangReport($date_start,$date_end), 'barang_masuk_gudang-'.$date_start.'.xlsx');
 
     }
 }

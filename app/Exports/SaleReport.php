@@ -53,8 +53,8 @@ class SaleReport implements FromView,WithCalculatedFormulas
         $sale = $sale->whereBetween('date', [$d_s,$d_e]);
 
         return view('sale.excel', [
-            'date_start' => $date_start,
-            'date_end' => $date_end,
+            'date_start' => $d_s,
+            'date_end' => $d_e,
             'payment' => $this->payment_method,
             'kasir' => $this->kasir,
             'rinci' => $this->rinci,
