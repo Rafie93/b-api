@@ -419,13 +419,6 @@ class ProductQuery
                             'source' => 1,
                         ],$stockDataStore);
 
-                    }
-
-                DB::commit();
-                $st = ProductStock::where('product_id',$id)->where('source',1)->get();
-                if($st->count() > 0){
-                    $stock_sis = $st->first()->stock;
-                    if($stock_sis!=$stock_store){
                         ProductStockHistory::insert([
                             'date' => date('Y-m-d H:i:s'),
                             'product_id'=>$id,
@@ -434,8 +427,24 @@ class ProductQuery
                             'source' => 1,
                             'ref_code' => "STOCK_OPNAME",
                         ]);
+
                     }
-                }
+
+                DB::commit();
+                // $st = ProductStock::where('product_id',$id)->where('source',1)->get();
+                // if($st->count() > 0){
+                //     $stock_sis = $st->first()->stock;
+                //     if($stock_sis!=$stock_store){
+                //         ProductStockHistory::insert([
+                //             'date' => date('Y-m-d H:i:s'),
+                //             'product_id'=>$id,
+                //             'unit'  => $request->sale_unit,
+                //             'quantity' => $stock_store,
+                //             'source' => 1,
+                //             'ref_code' => "STOCK_OPNAME",
+                //         ]);
+                //     }
+                // }
             }catch (\PDOException $e) {
                 DB::rollBack();
             }
