@@ -8,6 +8,8 @@ use App\Models\Products\ProductStock;
 use App\Http\Resources\Products\StockList as StockResource;
 use App\Http\Resources\Products\StockItem as StockItem;
 use App\Models\Products\ProductStockExpired;
+use App\Models\Products\ProductStockHistory;
+
 use App\Models\Products\Product;
 use Illuminate\Support\Facades\DB;
 
@@ -44,6 +46,18 @@ class StockController extends Controller
        return response()->json([
              'stocks'=>new StockItem($stock),
              'detail'=>ProductStockExpired::where('product_id',$id)->where('source',2)->get()
+       ],200);
+    }
+
+    public function detail_stock_store($id)
+    {
+       $stock = ProductStock::orderBy('stock','asc')
+                            ->where('product_id',$id)
+                            ->where('source',1)
+                            ->first();
+       return response()->json([
+             'stocks'=>new StockItem($stock),
+             'detail'=>ProductStockHistory::where('product_id',$id)->where('source',1)->get()
        ],200);
     }
 
