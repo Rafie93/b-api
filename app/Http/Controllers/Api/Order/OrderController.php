@@ -545,7 +545,7 @@ class OrderController extends Controller
                 'source' => $source
             ]);
         }
-        $this->insertHistoryStock($product_id,$quantity,$unit,$source,$refCode);
+        $this->insertHistoryStock($product_id,$quantity,$unit,$source,$refCode,'out');
 
     }
     public function stokIn($product_id,$quantity,$unit,$source,$refCode="")
@@ -566,16 +566,20 @@ class OrderController extends Controller
                 'source' => $source
             ]);
         }
-        $this->insertHistoryStock($product_id,$quantity,$unit,$source,$refCode);
+        $this->insertHistoryStock($product_id,$quantity,$unit,$source,$refCode,'in');
     }
 
-    public function insertHistoryStock($product_id,$quantity,$unit,$source,$refCode)
+    public function insertHistoryStock($product_id,$quantity,$unit,$source,$refCode,$jen)
     {
+        $qt = intval($quantity);
+        if($jen=='out'){
+           $qt = intval('-'.$quantity)
+        }
         ProductStockHistory::insert([
             'date' => date('Y-m-d H:i:s'),
             'product_id'=>$product_id,
             'unit'  => $unit,
-            'quantity' => intval('-'.$quantity),
+            'quantity' => $qt,
             'source' => $source,
             'ref_code' => $refCode,
         ]);
