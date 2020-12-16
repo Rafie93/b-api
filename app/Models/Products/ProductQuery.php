@@ -350,7 +350,7 @@ class ProductQuery
                                 ProductStockHistory::insert([
                                     'date' => date('Y-m-d H:i:s'),
                                     'product_id'=>$id,
-                                    'unit'  => $st->first()->unit
+                                    'unit'  => $st->first()->unit,
                                     'quantity' => $stock_store,
                                     'source' => 1,
                                     'ref_code' => "STOCK_OPNAME",
@@ -424,7 +424,7 @@ class ProductQuery
                                 ProductStockHistory::insert([
                                     'date' => date('Y-m-d H:i:s'),
                                     'product_id'=>$id,
-                                    'unit'  => $st->first()->unit,
+                                    'unit'  => $request->sale_unit,
                                     'quantity' => $stock_store,
                                     'source' => 1,
                                     'ref_code' => "STOCK_OPNAME",
