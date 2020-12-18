@@ -163,12 +163,12 @@ class SinkronisasiDataController extends Controller
                             'product_id' =>$detail_sales[$j]['product_id']
                         ],$dataDetail);
 
-                        $pd = Product::where('id',$detail_sales[$j]['product_id'])->get();
-                        if($pd->count() > 0){
-                            $sale_unit = $pd->first()->sale_unit;
-                        }else{
+                        // $pd = Product::where('id',$detail_sales[$j]['product_id'])->get();
+                        // if($pd->count() > 0){
+                        //     $sale_unit = $pd->first()->sale_unit;
+                        // }else{
                             $sale_unit = 'Pcs';
-                        }
+                        // }
 
                         $this->pengurangan_stock($detail_sales[$j]['product_id'],$detail_sales[$j]['quantity'],$sale_unit,$request->code);
 
