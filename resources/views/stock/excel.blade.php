@@ -1,3 +1,4 @@
+@inject('pQuery', 'App\Models\Products\ProductQuery')
 <table>
     <tr><th colspan="7"  style="text-align:center;"><strong>LAPORAN DATA STOCK
         @if ($source=='1')
@@ -24,8 +25,16 @@
         @foreach ($stock as $row)
             <tr>
                 <td >{{$no}}</td>
-                <td>{{$row->product->name}}</td>
-                <td>{{$row->product->sku}}</td>
+                <?php
+                $pp = $pQuery->checkProduct($row->product_id);
+                if ($pp->count()>0) { ?>
+                    <td>{{$row->product->name}}</td>
+                    <td>{{$row->product->sku}}</td>
+                <?}else{ ?>
+                    <td></td>
+                    <td></td>
+                <?}
+                ?>
                 <td align="center">{{$row->stock}}</td>
                 <td>{{$row->unit}}</td>
             </tr>
