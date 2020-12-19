@@ -17,6 +17,10 @@ use App\Models\Products\SupplierProduct;
 
 class ProductQuery
 {
+    public function checkProduct($id)
+    {
+       return Product::where('id',$id)->get();
+    }
     public function product_get($request)
     {
        return Product::orderBy('id','desc')

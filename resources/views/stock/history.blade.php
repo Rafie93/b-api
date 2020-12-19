@@ -24,10 +24,19 @@
     <tbody>
         @php $no = 1;@endphp
         @foreach ($stock as $row)
+
             <tr>
                 <td >{{$no}}</td>
-                <td>{{$row->product->name}}</td>
-                <td>{{$row->product->sku}}</td>
+                <?php
+                $pp = $pQuery->checkProduct($row->product_id);
+                if ($pp->count()>0) { ?>
+                    <td>{{$row->product->name}}</td>
+                    <td>{{$row->product->sku}}</td>
+                <?}else{ ?>
+                    <td></td>
+                    <td></td>
+                <?}
+                ?>
                 <td>{{$row->unit}}</td>
                 <td align="center">{{$row->stock}}</td>
             </tr>
