@@ -25,11 +25,11 @@ class SaleShiftReport implements FromView,WithCalculatedFormulas
     {
         $date = $this->date;
         $shift = $this->shift;
-        $time_start = "15:00:01";
+        $time_start = "15:30:01";
         $time_end = "22:59:59";
         if($shift=='pagi'){
             $time_start = "07:00:00";
-            $time_end = "15:00:00";
+            $time_end = "15:30:00";
         }
 
         $sale = Sale::orderBy('id','desc')

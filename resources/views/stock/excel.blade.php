@@ -34,7 +34,7 @@
                 if ($pp->count()>0) { ?>
                     <td>{{$row->product->name}}</td>
                     <td>{{$row->product->sku}}</td>
-                    <td>{{$row->product->barcode}}</td>
+                    <td>`{{$row->product->barcode}}</td>
                     <td>{{$row->product->price_modal}}</td>
                     <td>{{$row->product->price}}</td>
                 <?}else{ ?>
