@@ -573,7 +573,7 @@ class OrderController extends Controller
     {
         $qt = intval($quantity);
         if($jen=='out'){
-           $qt = intval('-'.$quantity)
+           $qt = intval('-'.$quantity);
         }
         ProductStockHistory::insert([
             'date' => date('Y-m-d H:i:s'),
