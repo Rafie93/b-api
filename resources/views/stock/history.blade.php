@@ -16,6 +16,9 @@
           <th style="text-align:center;width:10px"><strong>No</strong></th>
           <th style="text-align:center;width:50px"><strong>Nama Barang</strong></th>
           <th style="text-align:center;width:30px"><strong>Kode Barang</strong></th>
+          <th style="text-align:center;width:30px"><strong>Barcode</strong></th>
+          <th style="text-align:center;width:30px"><strong>Harga Modal</strong></th>
+          <th style="text-align:center;width:30px"><strong>Harga Jual</strong></th>
           <th style="text-align:center;width:30px"><strong>Satuan</strong></th>
           <th style="text-align:center;width:30px"><strong>Stock Sekarang</strong></th>
 
@@ -32,7 +35,13 @@
                 if ($pp->count()>0) { ?>
                     <td>{{$row->product->name}}</td>
                     <td>{{$row->product->sku}}</td>
+                    <td>{{$row->product->barcode}}</td>
+                    <td>{{$row->product->price_modal}}</td>
+                    <td>{{$row->product->price}}</td>
                 <?}else{ ?>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                 <?}
@@ -45,7 +54,8 @@
             @endphp
             @foreach ($history as $his)
                 <tr>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
+                    <td  style="background-color:#74ddaa">{{$his->date}}</td>
                     <td  style="background-color:#74ddaa">{{$his->ref_code}}</td>
                     <td  style="background-color:#74ddaa">{{$his->quantity}}</td>
                 </tr>
