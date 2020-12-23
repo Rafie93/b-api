@@ -37,6 +37,7 @@ Route::get('transaksi/data_transaksi', 'Api\Sistem\SinkronisasiDataController@da
 Route::get('transaksi/data_product', 'Api\Sistem\SinkronisasiDataController@data_product');
 
 Route::post('transaksi/upload_transaksi', 'Api\Sistem\SinkronisasiDataController@upload_transaksi');
+Route::get('sales/check_diskon/{id}', 'Api\Sistem\CheckDiskonController@check');
 
 
  //END API FOR MOBILE ANDROID TANPA LOGIN
